@@ -12,7 +12,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon-192.png" />
     <link rel="apple-touch-icon" href="assets/icon-192.png" />
-    <link rel="stylesheet" href="styles.css?v=20260701-1040" />
+    <link rel="stylesheet" href="styles.css?v=20260701-1055" />
   </head>
   <body>
     <section class="login-screen" id="login-screen" hidden>
@@ -31,8 +31,16 @@
             <strong id="login-email-label"></strong>
             <input id="login-password" type="password" placeholder="Senha" autocomplete="current-password" />
             <button class="primary-button" id="login-button" type="button">Entrar</button>
+            <button class="ghost-button" id="show-recovery-button" type="button">Criar ou recuperar senha</button>
             <button class="ghost-button" id="back-email-button" type="button">Trocar e-mail</button>
           </div>
+        </div>
+
+        <div class="login-form" id="password-recovery-form" hidden>
+          <strong>Acesso por e-mail</strong>
+          <input id="recovery-email" type="email" placeholder="E-mail" autocomplete="email" />
+          <button class="primary-button" id="send-recovery-button" type="button">Enviar link de acesso</button>
+          <button class="ghost-button" id="back-login-button" type="button">Voltar para entrar</button>
         </div>
 
         <div class="login-form" id="password-setup-form" hidden>
@@ -945,7 +953,7 @@ Pacote de arroz</textarea>
       </main>
     </div>
 
-    <script src="supabase-config.js?v=20260701-1040"></script>
-    <script src="app.js?v=20260701-1040"></script>
+    <script src="supabase-config.js?v=20260701-1055"></script>
+    <script src="app.js?v=20260701-1055"></script>
   </body>
 </html>

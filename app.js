@@ -425,6 +425,11 @@ const continueEmailButton = document.querySelector("#continue-email-button");
 const backEmailButton = document.querySelector("#back-email-button");
 const loginButton = document.querySelector("#login-button");
 const loginStatus = document.querySelector("#login-status");
+const passwordRecoveryForm = document.querySelector("#password-recovery-form");
+const recoveryEmail = document.querySelector("#recovery-email");
+const sendRecoveryButton = document.querySelector("#send-recovery-button");
+const showRecoveryButton = document.querySelector("#show-recovery-button");
+const backLoginButton = document.querySelector("#back-login-button");
 const passwordSetupForm = document.querySelector("#password-setup-form");
 const newPassword = document.querySelector("#new-password");
 const confirmPassword = document.querySelector("#confirm-password");
@@ -744,12 +749,15 @@ function setLoginScreenState(state) {
   document.body.classList.toggle("supabase-mode", hasSupabaseConfig());
   loginScreen.hidden = !needsLoginScreen;
 
-  if (loginForm) loginForm.hidden = state === "password";
+  if (loginForm) loginForm.hidden = state === "password" || state === "recovery";
+  if (passwordRecoveryForm) passwordRecoveryForm.hidden = state !== "recovery";
   if (passwordSetupForm) passwordSetupForm.hidden = state !== "password";
   if (state === "login") showEmailStep();
 
   if (state === "password") {
     setAuthMessage("Crie sua senha para entrar.");
+  } else if (state === "recovery") {
+    setAuthMessage("");
   } else if (state === "login") {
     setAuthMessage("");
   }
@@ -766,6 +774,7 @@ function showEmailStep() {
   if (loginEmailStep) loginEmailStep.hidden = false;
   if (loginPasswordStep) loginPasswordStep.hidden = true;
   if (loginPassword) loginPassword.value = "";
+  if (passwordRecoveryForm) passwordRecoveryForm.hidden = true;
 }
 
 function showPasswordStep() {
@@ -780,6 +789,19 @@ function showPasswordStep() {
   if (loginPasswordStep) loginPasswordStep.hidden = false;
   if (loginPassword) loginPassword.focus();
   setAuthMessage("");
+}
+
+function showRecoveryStep() {
+  const email = loginEmail?.value.trim() || authEmail?.value.trim() || "";
+  setLoginScreenState("recovery");
+  if (recoveryEmail) {
+    recoveryEmail.value = email;
+    recoveryEmail.focus();
+  }
+}
+
+function recoveryRedirectUrl() {
+  return new URL("./", window.location.href).href;
 }
 
 function profileIdFromValue(value) {
@@ -2304,13 +2326,36 @@ async function loginWithEmailPassword(email, password) {
   setAuthMessage("Entrando...");
   const { error } = await client.auth.signInWithPassword({ email, password });
   if (error) {
-    setAuthMessage("E-mail ou senha inválidos.");
+    setAuthMessage("E-mail ou senha inválidos. Use criar ou recuperar senha.");
     return;
   }
   if (authPassword) authPassword.value = "";
   if (loginPassword) loginPassword.value = "";
   passwordSetupRequired = false;
   await refreshAuthState();
+}
+
+async function sendPasswordRecovery() {
+  const email = recoveryEmail?.value.trim() || loginEmail?.value.trim();
+  if (!email) {
+    setAuthMessage("Informe seu e-mail.");
+    return;
+  }
+
+  const client = await getSupabaseClient();
+  if (!client) return;
+
+  setAuthMessage("Enviando link de acesso...");
+  const { error } = await client.auth.resetPasswordForEmail(email, {
+    redirectTo: recoveryRedirectUrl(),
+  });
+
+  if (error) {
+    setAuthMessage("Não foi possível enviar o link. Confira o e-mail.");
+    return;
+  }
+
+  setAuthMessage("Se o e-mail estiver autorizado, o link de acesso foi enviado.");
 }
 
 async function saveInvitedPassword() {
@@ -2392,6 +2437,15 @@ loginEmail?.addEventListener("keydown", (event) => {
 backEmailButton?.addEventListener("click", () => {
   showEmailStep();
   if (loginEmail) loginEmail.focus();
+});
+showRecoveryButton?.addEventListener("click", showRecoveryStep);
+backLoginButton?.addEventListener("click", () => {
+  setLoginScreenState("login");
+  if (loginEmail) loginEmail.focus();
+});
+sendRecoveryButton?.addEventListener("click", sendPasswordRecovery);
+recoveryEmail?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") sendPasswordRecovery();
 });
 loginButton?.addEventListener("click", async () => {
   await loginWithEmailPassword(loginEmail?.value.trim(), loginPassword?.value || "");
