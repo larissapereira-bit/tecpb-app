@@ -78,6 +78,19 @@ Depois que `supabase-config.js` tiver URL e anon key e o usuario entrar com e-ma
 - forum fica compartilhado entre todos
 - perfis e fotos passam a carregar do banco
 
-## 6. Publicar de novo
+## 6. Primeira carga dos dados do prototipo
+
+Ao entrar como administrador, use o botao `Enviar dados locais`. Ele envia para o Supabase os dados que ja existem no prototipo:
+
+- perfis
+- calendario
+- listas
+- estudos
+- feedbacks positivos
+- forum
+
+Use esse botao uma vez depois que o banco estiver criado. Depois disso, as novas alteracoes feitas no app ja tentam sincronizar automaticamente.
+
+## 7. Publicar de novo
 
 Depois da conexao pronta, gerar novo pacote e publicar no GitHub Pages.

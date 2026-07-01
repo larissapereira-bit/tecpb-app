@@ -190,7 +190,7 @@ select {
 
 .auth-panel {
   display: grid;
-  grid-template-columns: minmax(150px, 1fr) minmax(112px, 0.8fr) auto auto;
+  grid-template-columns: minmax(150px, 1fr) minmax(112px, 0.8fr) auto auto auto;
   align-items: center;
   gap: 8px;
   border: 1px solid var(--line);

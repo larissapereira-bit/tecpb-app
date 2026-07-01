@@ -414,6 +414,7 @@ const authPanel = document.querySelector("#auth-panel");
 const authEmail = document.querySelector("#auth-email");
 const authPassword = document.querySelector("#auth-password");
 const authLoginButton = document.querySelector("#auth-login-button");
+const authUploadButton = document.querySelector("#auth-upload-button");
 const authLogoutButton = document.querySelector("#auth-logout-button");
 const authStatus = document.querySelector("#auth-status");
 const forumFields = {
@@ -875,6 +876,35 @@ async function saveForumRemote(client) {
   await upsertRows(client, "forum_replies", replies);
 }
 
+async function uploadLocalDataToRemote() {
+  const client = await ensureAuthenticatedClient();
+  if (!client) {
+    setAuthMessage("Entre para enviar os dados");
+    return;
+  }
+
+  if (authUploadButton) authUploadButton.disabled = true;
+  setAuthMessage("Enviando dados locais...");
+  if (syncStatus) syncStatus.textContent = "Sincronizando dados locais";
+
+  try {
+    await saveProfilesRemote(client);
+    await saveEventsRemote(client);
+    await saveSupplyListsRemote(client);
+    await saveStudiesRemote(client);
+    await saveFeedbacksRemote(client);
+    await saveForumRemote(client);
+    setAuthMessage("Dados locais enviados");
+    if (syncStatus) syncStatus.textContent = "Dados locais sincronizados";
+  } catch (error) {
+    console.error(error);
+    setAuthMessage("Não foi possível enviar os dados");
+    if (syncStatus) syncStatus.textContent = "Falha na sincronização";
+  } finally {
+    if (authUploadButton) authUploadButton.disabled = false;
+  }
+}
+
 function saveAllLocalOnly() {
   localStorage.setItem(storageKey, JSON.stringify(profiles));
   localStorage.setItem(eventsStorageKey, JSON.stringify(events));
@@ -1040,6 +1070,7 @@ async function refreshAuthState() {
   const isLoggedIn = Boolean(remoteSession);
 
   if (authLoginButton) authLoginButton.hidden = isLoggedIn;
+  if (authUploadButton) authUploadButton.hidden = !isLoggedIn;
   if (authLogoutButton) authLogoutButton.hidden = !isLoggedIn;
   if (authEmail) authEmail.hidden = isLoggedIn;
   if (authPassword) authPassword.hidden = isLoggedIn;
@@ -2050,6 +2081,7 @@ authLogoutButton?.addEventListener("click", async () => {
   remoteSession = null;
   await refreshAuthState();
 });
+authUploadButton?.addEventListener("click", uploadLocalDataToRemote);
 calendarYear?.addEventListener("change", renderEvents);
 document.querySelectorAll("[data-presence]").forEach((button) => {
   button.addEventListener("click", () => setEventPresence(button.dataset.presence));
