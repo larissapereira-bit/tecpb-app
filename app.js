@@ -424,6 +424,11 @@ const setupFields = {
   login: document.querySelector("#setup-login-status"),
   upload: document.querySelector("#setup-upload-status"),
 };
+const backupFields = {
+  exportButton: document.querySelector("#export-backup-button"),
+  importInput: document.querySelector("#import-backup-input"),
+  status: document.querySelector("#backup-status"),
+};
 const forumFields = {
   title: document.querySelector("#forum-title"),
   message: document.querySelector("#forum-message"),
@@ -936,6 +941,67 @@ function saveAllLocalOnly() {
   localStorage.setItem(studiesStorageKey, JSON.stringify(studies));
   localStorage.setItem(feedbackStorageKey, JSON.stringify(feedbacks));
   localStorage.setItem(forumStorageKey, JSON.stringify(forumTopics));
+}
+
+function currentBackupData() {
+  return {
+    version: 1,
+    app: "TECPB",
+    exportedAt: new Date().toISOString(),
+    profiles,
+    events,
+    supplyLists,
+    studies,
+    feedbacks,
+    forumTopics,
+  };
+}
+
+function exportLocalBackup() {
+  const backup = JSON.stringify(currentBackupData(), null, 2);
+  const blob = new Blob([backup], { type: "application/json" });
+  const link = document.createElement("a");
+  const date = new Date().toISOString().slice(0, 10);
+  link.href = URL.createObjectURL(blob);
+  link.download = `tecpb-backup-${date}.json`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  if (backupFields.status) backupFields.status.textContent = "Backup exportado.";
+}
+
+function replaceArray(target, nextItems) {
+  target.splice(0, target.length, ...(Array.isArray(nextItems) ? nextItems : []));
+}
+
+function importLocalBackup(file) {
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    try {
+      const backup = JSON.parse(reader.result);
+      if (backup.app !== "TECPB") throw new Error("Arquivo inválido");
+
+      replaceArray(profiles, mergeSavedProfiles(profiles, backup.profiles || []));
+      replaceArray(events, backup.events || []);
+      replaceArray(supplyLists, backup.supplyLists || []);
+      replaceArray(studies, backup.studies || []);
+      replaceArray(feedbacks, normalizeFeedbacks(backup.feedbacks || []));
+      replaceArray(forumTopics, backup.forumTopics || []);
+      selectedEventId = events[0]?.id || "";
+      saveAllLocalOnly();
+      renderEverything();
+      if (backupFields.status) backupFields.status.textContent = "Backup importado.";
+    } catch (error) {
+      console.error(error);
+      if (backupFields.status) backupFields.status.textContent = "Não foi possível importar este backup.";
+    } finally {
+      if (backupFields.importInput) backupFields.importInput.value = "";
+    }
+  });
+  reader.readAsText(file);
 }
 
 async function loadRemoteData(client) {
@@ -2081,6 +2147,8 @@ document.querySelector("#add-event-button")?.addEventListener("click", addEvent)
 document.querySelector("#add-supply-list-button")?.addEventListener("click", addSupplyList);
 document.querySelector("#send-feedback-button")?.addEventListener("click", sendFeedback);
 document.querySelector("#add-forum-topic-button")?.addEventListener("click", addForumTopic);
+backupFields.exportButton?.addEventListener("click", exportLocalBackup);
+backupFields.importInput?.addEventListener("change", () => importLocalBackup(backupFields.importInput.files?.[0]));
 authLoginButton?.addEventListener("click", async () => {
   const email = authEmail?.value.trim();
   const password = authPassword?.value || "";

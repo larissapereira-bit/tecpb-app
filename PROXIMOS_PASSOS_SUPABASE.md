@@ -4,6 +4,8 @@ O app publicado hoje ainda salva calendario, listas, estudos, forum, feedbacks e
 
 ## 1. Criar o projeto Supabase
 
+Antes de mexer no banco, abra `Administração` no app e use `Exportar backup`. Guarde o arquivo `.json` gerado.
+
 1. Acesse https://supabase.com
 2. Crie um projeto chamado `tecpb-app`
 3. Abra `SQL Editor`
