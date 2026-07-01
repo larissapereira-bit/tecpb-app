@@ -322,6 +322,7 @@ const supplyStorageKey = "tecpbSupplyLists";
 const studiesStorageKey = "tecpbStudies";
 const feedbackStorageKey = "tecpbFeedbacks";
 const forumStorageKey = "tecpbForumTopics";
+const remoteUploadStorageKey = "tecpbLastRemoteUploadAt";
 const removedObligation = ["Mesa", "de", "iniciação"].join(" ");
 
 const hierarchyOverrides = {
@@ -417,6 +418,12 @@ const authLoginButton = document.querySelector("#auth-login-button");
 const authUploadButton = document.querySelector("#auth-upload-button");
 const authLogoutButton = document.querySelector("#auth-logout-button");
 const authStatus = document.querySelector("#auth-status");
+const setupFields = {
+  main: document.querySelector("#setup-main-status"),
+  config: document.querySelector("#setup-config-status"),
+  login: document.querySelector("#setup-login-status"),
+  upload: document.querySelector("#setup-upload-status"),
+};
 const forumFields = {
   title: document.querySelector("#forum-title"),
   message: document.querySelector("#forum-message"),
@@ -660,6 +667,21 @@ function renderSyncStatus() {
     ? "Supabase configurado: aguardando login"
     : "Modo local: dados neste aparelho";
   syncStatus.classList.toggle("online", hasRemoteConfig);
+  renderOnlineSetupStatus();
+}
+
+function renderOnlineSetupStatus() {
+  const configured = hasSupabaseConfig();
+  const loggedIn = Boolean(remoteSession);
+  const lastUpload = localStorage.getItem(remoteUploadStorageKey);
+
+  if (setupFields.main) {
+    setupFields.main.textContent = configured ? loggedIn ? "Online" : "Configurado" : "Modo local";
+    setupFields.main.classList.toggle("confirmed", configured && loggedIn);
+  }
+  if (setupFields.config) setupFields.config.textContent = configured ? "Configurado" : "Não configurado";
+  if (setupFields.login) setupFields.login.textContent = loggedIn ? "Conectado" : "Aguardando";
+  if (setupFields.upload) setupFields.upload.textContent = lastUpload ? `Enviada em ${feedbackDateLabel(lastUpload)}` : "Pendente";
 }
 
 function supabaseConfig() {
@@ -894,8 +916,10 @@ async function uploadLocalDataToRemote() {
     await saveStudiesRemote(client);
     await saveFeedbacksRemote(client);
     await saveForumRemote(client);
+    localStorage.setItem(remoteUploadStorageKey, new Date().toISOString());
     setAuthMessage("Dados locais enviados");
     if (syncStatus) syncStatus.textContent = "Dados locais sincronizados";
+    renderOnlineSetupStatus();
   } catch (error) {
     console.error(error);
     setAuthMessage("Não foi possível enviar os dados");
@@ -1048,6 +1072,7 @@ async function loadRemoteData(client) {
   renderEverything();
   setMode(currentMode);
   if (syncStatus) syncStatus.textContent = "Dados online carregados";
+  renderOnlineSetupStatus();
 }
 
 function renderEverything() {
@@ -1068,6 +1093,7 @@ async function refreshAuthState() {
   const { data } = await client.auth.getSession();
   remoteSession = data.session;
   const isLoggedIn = Boolean(remoteSession);
+  renderOnlineSetupStatus();
 
   if (authLoginButton) authLoginButton.hidden = isLoggedIn;
   if (authUploadButton) authUploadButton.hidden = !isLoggedIn;

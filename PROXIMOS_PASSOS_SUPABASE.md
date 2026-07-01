@@ -42,19 +42,11 @@ Mediuns:
 - Flavia
 - Luciana
 
-Depois de criar cada usuario, abra a tabela `app_users` e vincule o ID do usuario ao perfil.
+Depois de criar cada usuario, copie o UUID gerado no Supabase e use o arquivo `supabase-users-template.sql`.
 
-Exemplo:
+Nesse arquivo, substitua `UUID_THIAGO`, `UUID_JAQUELINE`, `UUID_LARISSA` e os demais UUIDs pelos IDs reais dos usuarios criados em `Authentication`.
 
-```sql
-insert into public.app_users (id, profile_id, full_name, role)
-values
-  ('UUID_DO_USUARIO_THIAGO', 'thiago', 'Thiago', 'admin'),
-  ('UUID_DO_USUARIO_JAQUELINE', 'jaqueline', 'Jaqueline', 'admin'),
-  ('UUID_DO_USUARIO_LARISSA', 'larissa', 'Larissa', 'admin');
-```
-
-Para os demais, use `role = 'medium'`.
+O arquivo ja deixa Thiago, Jaqueline e Larissa como `admin`. Os demais ficam como `medium`.
 
 ## 4. Preencher a configuracao
 

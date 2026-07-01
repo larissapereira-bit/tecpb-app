@@ -219,6 +219,32 @@ select {
   font-weight: 700;
 }
 
+.setup-list {
+  display: grid;
+  gap: 10px;
+}
+
+.setup-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffaf0;
+  padding: 12px;
+}
+
+.setup-row span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.setup-row strong {
+  color: var(--green-deep);
+  text-align: right;
+}
+
 .eyebrow {
   margin: 0 0 4px;
   color: #7c5a13;
