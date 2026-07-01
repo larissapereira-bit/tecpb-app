@@ -325,6 +325,8 @@ const forumStorageKey = "tecpbForumTopics";
 const remoteUploadStorageKey = "tecpbLastRemoteUploadAt";
 const activeProfileStorageKey = "tecpbActiveProfile";
 const removedObligation = ["Mesa", "de", "iniciação"].join(" ");
+let remoteSession = null;
+let remoteSaveChain = Promise.resolve();
 
 const hierarchyOverrides = {
   thiago: {
@@ -718,8 +720,6 @@ function hasSupabaseConfig() {
 }
 
 let supabaseClientPromise = null;
-let remoteSession = null;
-let remoteSaveChain = Promise.resolve();
 let passwordSetupRequired = ["invite", "recovery"].includes(new URLSearchParams(window.location.hash.slice(1)).get("type"));
 
 async function getSupabaseClient() {
