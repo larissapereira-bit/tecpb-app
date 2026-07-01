@@ -414,8 +414,13 @@ const forumReplyCount = document.querySelector("#forum-reply-count");
 const forumStatus = document.querySelector("#forum-save-status");
 const loginScreen = document.querySelector("#login-screen");
 const loginForm = document.querySelector("#login-form");
+const loginEmailStep = document.querySelector("#login-email-step");
+const loginPasswordStep = document.querySelector("#login-password-step");
 const loginEmail = document.querySelector("#login-email");
+const loginEmailLabel = document.querySelector("#login-email-label");
 const loginPassword = document.querySelector("#login-password");
+const continueEmailButton = document.querySelector("#continue-email-button");
+const backEmailButton = document.querySelector("#back-email-button");
 const loginButton = document.querySelector("#login-button");
 const loginStatus = document.querySelector("#login-status");
 const passwordSetupForm = document.querySelector("#password-setup-form");
@@ -741,11 +746,12 @@ function setLoginScreenState(state) {
 
   if (loginForm) loginForm.hidden = state === "password";
   if (passwordSetupForm) passwordSetupForm.hidden = state !== "password";
+  if (state === "login") showEmailStep();
 
   if (state === "password") {
-    setAuthMessage("Convite aceito. Crie sua senha para entrar.");
+    setAuthMessage("Crie sua senha para entrar.");
   } else if (state === "login") {
-    setAuthMessage("Entre com o e-mail convidado pela administração.");
+    setAuthMessage("");
   }
 }
 
@@ -754,6 +760,26 @@ function showUnlinkedAccount() {
   if (loginForm) loginForm.hidden = true;
   if (passwordSetupForm) passwordSetupForm.hidden = true;
   setAuthMessage("Conta criada. Agora a administração precisa vincular seu usuário ao perfil.");
+}
+
+function showEmailStep() {
+  if (loginEmailStep) loginEmailStep.hidden = false;
+  if (loginPasswordStep) loginPasswordStep.hidden = true;
+  if (loginPassword) loginPassword.value = "";
+}
+
+function showPasswordStep() {
+  const email = loginEmail?.value.trim();
+  if (!email) {
+    setAuthMessage("Informe seu e-mail.");
+    return;
+  }
+
+  if (loginEmailLabel) loginEmailLabel.textContent = email;
+  if (loginEmailStep) loginEmailStep.hidden = true;
+  if (loginPasswordStep) loginPasswordStep.hidden = false;
+  if (loginPassword) loginPassword.focus();
+  setAuthMessage("");
 }
 
 function profileIdFromValue(value) {
@@ -1311,7 +1337,7 @@ async function refreshAuthState() {
 
   if (!isLoggedIn) {
     setLoginScreenState("login");
-    setAuthMessage("Entre com o e-mail convidado");
+    setAuthMessage("");
     if (syncStatus) syncStatus.textContent = "Supabase configurado: aguardando login";
     return;
   }
@@ -2269,7 +2295,7 @@ activeProfileSelect?.addEventListener("change", () => setActiveProfile(activePro
 
 async function loginWithEmailPassword(email, password) {
   if (!email || !password) {
-    setAuthMessage("Informe o e-mail convidado e a senha");
+    setAuthMessage("Informe e-mail e senha.");
     return;
   }
 
@@ -2278,7 +2304,7 @@ async function loginWithEmailPassword(email, password) {
   setAuthMessage("Entrando...");
   const { error } = await client.auth.signInWithPassword({ email, password });
   if (error) {
-    setAuthMessage("Convite/login não autorizado");
+    setAuthMessage("E-mail ou senha inválidos.");
     return;
   }
   if (authPassword) authPassword.value = "";
@@ -2301,7 +2327,7 @@ async function saveInvitedPassword() {
 
   const client = await ensureAuthenticatedClient();
   if (!client) {
-    setAuthMessage("Convite expirado. Envie um novo convite.");
+    setAuthMessage("Link expirado. Solicite um novo acesso.");
     return;
   }
 
@@ -2359,8 +2385,19 @@ backupFields.importInput?.addEventListener("change", () => importLocalBackup(bac
 authLoginButton?.addEventListener("click", async () => {
   await loginWithEmailPassword(authEmail?.value.trim(), authPassword?.value || "");
 });
+continueEmailButton?.addEventListener("click", showPasswordStep);
+loginEmail?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") showPasswordStep();
+});
+backEmailButton?.addEventListener("click", () => {
+  showEmailStep();
+  if (loginEmail) loginEmail.focus();
+});
 loginButton?.addEventListener("click", async () => {
   await loginWithEmailPassword(loginEmail?.value.trim(), loginPassword?.value || "");
+});
+loginPassword?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") loginWithEmailPassword(loginEmail?.value.trim(), loginPassword?.value || "");
 });
 savePasswordButton?.addEventListener("click", saveInvitedPassword);
 authLogoutButton?.addEventListener("click", async () => {

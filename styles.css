@@ -54,6 +54,7 @@ body.supabase-mode .prototype-profile-switch {
   background: var(--surface);
   box-shadow: var(--shadow);
   padding: 28px;
+  text-align: center;
 }
 
 .login-logo {
@@ -64,7 +65,7 @@ body.supabase-mode .prototype-profile-switch {
   background: #fff;
   object-fit: contain;
   padding: 7px;
-  margin-bottom: 16px;
+  margin: 0 auto 16px;
 }
 
 .login-card h1 {
@@ -80,10 +81,26 @@ body.supabase-mode .prototype-profile-switch {
   display: grid;
   gap: 10px;
   margin-top: 18px;
+  text-align: left;
 }
 
 .login-form[hidden] {
   display: none;
+}
+
+.login-step {
+  display: grid;
+  gap: 10px;
+}
+
+.login-step[hidden] {
+  display: none;
+}
+
+.login-step strong {
+  color: var(--green-deep);
+  font-size: 0.94rem;
+  overflow-wrap: anywhere;
 }
 
 .login-form input {
