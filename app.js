@@ -383,6 +383,7 @@ const adminCount = document.querySelector("#admin-count");
 const adminNames = document.querySelector("#admin-names");
 const adminPermissionList = document.querySelector("#admin-permission-list");
 const saveStatus = document.querySelector("#profile-save-status");
+const syncStatus = document.querySelector("#sync-status");
 const photoInput = document.querySelector("#profile-photo-input");
 const photoPreview = document.querySelector("#profile-photo-preview");
 const calendarYear = document.querySelector("#calendar-year");
@@ -634,6 +635,18 @@ function showScreen(screenId) {
   });
 
   pageTitle.textContent = titles[safeScreen] || "TECPB";
+}
+
+function renderSyncStatus() {
+  if (!syncStatus) return;
+
+  const config = window.TECPB_SUPABASE || {};
+  const hasRemoteConfig = Boolean(config.url && config.anonKey);
+
+  syncStatus.textContent = hasRemoteConfig
+    ? "Supabase configurado: pronto para sincronizar"
+    : "Modo local: dados neste aparelho";
+  syncStatus.classList.toggle("online", hasRemoteConfig);
 }
 
 function setMode(mode) {
@@ -1595,6 +1608,7 @@ document.querySelectorAll("[data-presence]").forEach((button) => {
 });
 
 renderAllProfiles();
+renderSyncStatus();
 loadProfile(currentProfileId);
 renderSelfProfile();
 renderEvents();

@@ -160,6 +160,34 @@ select {
   margin-bottom: 24px;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sync-status {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(196, 154, 34, 0.38);
+  border-radius: 8px;
+  background: #fff8e8;
+  color: #6f4d0d;
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin: 0;
+  padding: 0 12px;
+}
+
+.sync-status.online {
+  border-color: rgba(39, 107, 61, 0.36);
+  background: var(--green-soft);
+  color: var(--green-deep);
+}
+
 .eyebrow {
   margin: 0 0 4px;
   color: #7c5a13;
@@ -999,6 +1027,10 @@ textarea {
   .topbar {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .topbar-actions {
+    justify-content: flex-start;
   }
 
   .supply-item {

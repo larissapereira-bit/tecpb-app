@@ -1,8 +1,9 @@
-const CACHE_NAME = "tecpb-app-v1";
+const CACHE_NAME = "tecpb-app-v2";
 const APP_ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
+  "./supabase-config.js",
   "./app.js",
   "./manifest.webmanifest",
   "./assets/tecpb-symbol.png",

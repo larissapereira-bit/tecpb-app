@@ -5,11 +5,14 @@ Este pacote e um app instalavel no formato PWA. Para publicar, envie todos estes
 - index.html
 - styles.css
 - app.js
+- supabase-config.js
 - manifest.webmanifest
 - service-worker.js
 - assets/tecpb-symbol.png
 - assets/icon-192.png
 - assets/icon-512.png
+- supabase-schema.sql
+- PROXIMOS_PASSOS_SUPABASE.md
 
 Opcoes simples de publicacao:
 
@@ -37,3 +40,6 @@ Para o modo aplicativo funcionar bem, publique em um endereco HTTPS. Netlify, Ve
 
 Observacao importante:
 Este prototipo salva informacoes no navegador usando localStorage. Isso quer dizer que, nesta versao, os dados nao ficam sincronizados entre celulares diferentes. Para virar app real com login, perfis compartilhados, anexos e dados iguais para todos, o proximo passo e conectar um backend/banco de dados.
+
+Proximo passo tecnico:
+Use o arquivo supabase-schema.sql para criar o banco no Supabase. Depois preencha supabase-config.js com a Project URL e a anon public key do projeto. O roteiro completo esta em PROXIMOS_PASSOS_SUPABASE.md.

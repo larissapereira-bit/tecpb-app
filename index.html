@@ -12,7 +12,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon-192.png" />
     <link rel="apple-touch-icon" href="assets/icon-192.png" />
-    <link rel="stylesheet" href="styles.css?v=20260701-0205" />
+    <link rel="stylesheet" href="styles.css?v=20260701-0310" />
   </head>
   <body>
     <div class="app-shell">
@@ -50,9 +50,12 @@
             <p class="eyebrow">Protótipo inicial</p>
             <h1 id="page-title">Início</h1>
           </div>
-          <div class="role-switch" aria-label="Modo de visualização">
-            <button class="selected" type="button">Admin</button>
-            <button type="button">Médium</button>
+          <div class="topbar-actions">
+            <p class="sync-status" id="sync-status">Modo local: dados neste aparelho</p>
+            <div class="role-switch" aria-label="Modo de visualização">
+              <button class="selected" type="button">Admin</button>
+              <button type="button">Médium</button>
+            </div>
           </div>
         </header>
 
@@ -863,6 +866,7 @@ Pacote de arroz</textarea>
       </main>
     </div>
 
-    <script src="app.js?v=20260701-0205"></script>
+    <script src="supabase-config.js?v=20260701-0310"></script>
+    <script src="app.js?v=20260701-0310"></script>
   </body>
 </html>
