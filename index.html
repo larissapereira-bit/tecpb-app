@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0d2f20" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="TECPB" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>TECPB</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icon-192.png" />
+    <link rel="apple-touch-icon" href="assets/icon-192.png" />
+    <link rel="stylesheet" href="styles.css?v=20260701-0205" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navegação principal">
+        <div class="brand">
+          <img class="brand-logo" src="assets/tecpb-symbol.png" alt="Símbolo do TECPB" />
+          <div>
+            <strong>TECPB</strong>
+          </div>
+        </div>
+
+        <nav class="nav-list">
+          <button class="nav-item active" data-admin-only="true" data-screen="inicio" type="button">Início</button>
+          <button class="nav-item" data-screen="calendario" type="button">Calendário</button>
+          <button class="nav-item" data-screen="itens" type="button">Listas</button>
+          <button class="nav-item" data-screen="estudos" type="button">Estudos</button>
+          <button class="nav-item" data-screen="forum" type="button">Fórum</button>
+          <button class="nav-item" data-admin-only="true" data-screen="perfis" type="button">Perfis</button>
+          <button class="nav-item" data-screen="perfil" type="button">Meu perfil</button>
+          <button class="nav-item" data-admin-only="true" data-screen="admin" type="button">Administração</button>
+        </nav>
+
+        <div class="user-pill">
+          <span class="avatar">LS</span>
+          <div>
+            <strong>Larissa</strong>
+            <small>Administradora</small>
+          </div>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Protótipo inicial</p>
+            <h1 id="page-title">Início</h1>
+          </div>
+          <div class="role-switch" aria-label="Modo de visualização">
+            <button class="selected" type="button">Admin</button>
+            <button type="button">Médium</button>
+          </div>
+        </header>
+
+        <section class="screen active" id="inicio">
+          <div class="summary-grid">
+            <article class="metric">
+              <span>Próxima gira</span>
+              <strong>05 jul, 19h30</strong>
+              <small>Desenvolvimento e atendimento</small>
+            </article>
+            <article class="metric">
+              <span>Sua presença</span>
+              <strong class="ok">Confirmada</strong>
+              <small>Você pode alterar até 24h antes</small>
+            </article>
+            <article class="metric">
+              <span>Itens assumidos</span>
+              <strong>2</strong>
+              <small>Arruda e pacote de arroz</small>
+            </article>
+          </div>
+
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Hoje para você</h2>
+                <button class="ghost-button" data-screen="calendario" type="button">Ver agenda</button>
+              </div>
+              <div class="timeline">
+                <div class="timeline-item">
+                  <time>Qua, 01 jul</time>
+                  <strong>Estudo doutrinário</strong>
+                  <p>Confirmar presença e levar caderno.</p>
+                </div>
+                <div class="timeline-item">
+                  <time>Dom, 05 jul</time>
+                  <strong>Gira de desenvolvimento</strong>
+                  <p>Chegada recomendada às 18h45.</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel accent">
+              <h2>Recado da coordenação</h2>
+              <p>
+                A lista de ervas da próxima gira já está aberta. Quem puder
+                contribuir deve escolher um item e confirmar a entrega pelo app.
+              </p>
+              <button class="primary-button" data-screen="itens" type="button">Escolher item</button>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="calendario">
+          <div class="summary-grid">
+            <article class="metric">
+              <span>Ano selecionado</span>
+              <strong id="calendar-year-label">2026</strong>
+              <small>Eventos deste e dos próximos anos</small>
+            </article>
+            <article class="metric">
+              <span>Eventos cadastrados</span>
+              <strong id="event-count">2</strong>
+              <small>Visíveis para todos</small>
+            </article>
+            <article class="metric">
+              <span>Minha resposta</span>
+              <strong id="my-event-status">Pendente</strong>
+              <small>Confirmação por evento</small>
+            </article>
+          </div>
+
+          <div class="calendar-layout">
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Calendário da casa</h2>
+                <label class="compact-field">
+                  <span>Ano</span>
+                  <select id="calendar-year"></select>
+                </label>
+              </div>
+              <div class="event-list" id="event-list"></div>
+            </article>
+
+            <article class="panel event-detail" id="event-detail">
+              <div class="panel-heading">
+                <h2 id="event-detail-title">Detalhes do evento</h2>
+                <span class="tag" id="event-detail-type">Evento</span>
+              </div>
+              <p id="event-detail-description">Selecione um evento para ver detalhes.</p>
+              <div class="presence-actions">
+                <button class="primary-button" data-presence="Vou" type="button">Vou participar</button>
+                <button class="secondary-button" data-presence="Talvez" type="button">Talvez</button>
+                <button class="danger-button" data-presence="Não vou" type="button">Não poderei ir</button>
+              </div>
+              <p class="save-status" id="event-presence-status" aria-live="polite"></p>
+            </article>
+          </div>
+
+          <article class="panel admin-only">
+            <div class="panel-heading">
+              <h2>Cadastrar evento</h2>
+              <span class="tag confirmed">Admin</span>
+            </div>
+
+            <form class="profile-form">
+              <label class="field">
+                <span>Título</span>
+                <input id="event-title" type="text" value="Nova gira" />
+              </label>
+
+              <label class="field">
+                <span>Tipo</span>
+                <select id="event-type">
+                  <option>Gira</option>
+                  <option>Estudo</option>
+                  <option>Obrigação</option>
+                  <option>Reunião</option>
+                  <option>Limpeza</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Data</span>
+                <input id="event-date" type="date" />
+              </label>
+
+              <label class="field">
+                <span>Horário</span>
+                <input id="event-time" type="time" />
+              </label>
+
+              <label class="field full">
+                <span>Local</span>
+                <input id="event-place" type="text" value="Terreiro" />
+              </label>
+
+              <label class="field full">
+                <span>Descrição</span>
+                <textarea id="event-description">Descreva orientação, preparo e observações para a corrente.</textarea>
+              </label>
+            </form>
+
+            <button class="primary-button" id="add-event-button" type="button">Salvar evento</button>
+            <p class="save-status" id="event-save-status" aria-live="polite"></p>
+          </article>
+        </section>
+
+        <section class="screen" id="itens">
+          <div class="summary-grid">
+            <article class="metric">
+              <span>Listas abertas</span>
+              <strong id="supply-list-count">1</strong>
+              <small>Criadas pela administração</small>
+            </article>
+            <article class="metric">
+              <span>Itens pendentes</span>
+              <strong id="supply-pending-count">2</strong>
+              <small>Aguardando responsável</small>
+            </article>
+            <article class="metric">
+              <span>Minhas entregas</span>
+              <strong id="my-supply-count">0</strong>
+              <small>Itens assumidos por você</small>
+            </article>
+          </div>
+
+          <div class="supply-layout">
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Listas da casa</h2>
+                <span class="tag">Visível para a corrente</span>
+              </div>
+              <div class="supply-list" id="supply-list"></div>
+            </article>
+
+            <article class="panel admin-only">
+              <div class="panel-heading">
+                <h2>Criar lista completa</h2>
+                <span class="tag confirmed">Admin</span>
+              </div>
+
+              <form class="profile-form">
+                <label class="field">
+                  <span>Nome da lista</span>
+                  <input id="supply-list-title" type="text" value="Lista da próxima gira" />
+                </label>
+
+                <label class="field">
+                  <span>Evento relacionado</span>
+                  <select id="supply-event"></select>
+                </label>
+
+                <label class="field full">
+                  <span>Itens da lista</span>
+                  <textarea id="supply-items">Arruda fresca
+Velas brancas
+Material de limpeza
+Pacote de arroz</textarea>
+                </label>
+              </form>
+
+              <button class="primary-button" id="add-supply-list-button" type="button">Salvar lista</button>
+              <p class="save-status" id="supply-save-status" aria-live="polite"></p>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="perfis">
+          <div class="summary-grid">
+            <article class="metric">
+              <span>Perfis cadastrados</span>
+              <strong id="profile-count">12</strong>
+              <small>Hierarquia inicial da corrente</small>
+            </article>
+            <article class="metric">
+              <span>Etapa mais alta</span>
+              <strong>Camarinha</strong>
+              <small>Último nível da régua espiritual</small>
+            </article>
+            <article class="metric">
+              <span>Administradores</span>
+              <strong id="admin-count">3</strong>
+              <small id="admin-names">Thiago, Jaqueline e Larissa</small>
+            </article>
+          </div>
+
+          <div class="panel">
+            <div class="panel-heading">
+              <h2>Régua de obrigações</h2>
+              <span class="tag">Do início à Camarinha</span>
+            </div>
+            <ol class="obligation-track">
+              <li>Iniciação</li>
+              <li>Batismo</li>
+              <li>Mão de Pemba</li>
+              <li>Obrigação de cabeça</li>
+              <li>Orixalá</li>
+              <li>Obrigação de fogo</li>
+              <li>Obrigação de faca</li>
+              <li>Camarinha</li>
+            </ol>
+          </div>
+
+          <div class="profile-layout">
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Liderança e hierarquia</h2>
+                <button class="primary-button" id="new-profile-button" type="button">Novo perfil</button>
+              </div>
+
+              <div class="hierarchy-list" id="hierarchy-list">
+                <button class="member-card current" type="button">
+                  <span class="member-crown crown-large">♛</span>
+                  <span class="member-photo">TH</span>
+                  <span>
+                    <strong>Thiago</strong>
+                    <small>Pai de santo</small>
+                    <small class="member-function">Condução espiritual da casa</small>
+                  </span>
+                  <em><span class="role-badge admin">ADM</span></em>
+                </button>
+
+                <button class="member-card" type="button">
+                  <span class="member-crown crown-small">♕</span>
+                  <span class="member-photo">JQ</span>
+                  <span>
+                    <strong>Jaqueline</strong>
+                    <small>Mãe pequena e capitã</small>
+                    <small class="member-function">Projeto Terreirinho</small>
+                  </span>
+                  <em><span class="role-badge admin">ADM</span></em>
+                </button>
+
+                <button class="member-card" type="button">
+                  <span class="member-rank">1</span>
+                  <span class="member-photo">CL</span>
+                  <span>
+                    <strong>Claudemir</strong>
+                    <small>Pai Ogã</small>
+                    <small class="member-function">Obras, manutenção e limpeza</small>
+                  </span>
+                  <em>Ogã</em>
+                </button>
+
+                <button class="member-card" type="button">
+                  <span class="member-rank">2</span>
+                  <span class="member-photo">RT</span>
+                  <span>
+                    <strong>Rita</strong>
+                    <small>Médium</small>
+                    <small class="member-function">Projeto Terreirinho</small>
+                  </span>
+                  <em>Obrigação de faca</em>
+                </button>
+
+                <button class="member-card" type="button">
+                  <span class="member-rank">3</span>
+                  <span class="member-photo">MC</span>
+                  <span>
+                    <strong>Marcela</strong>
+                    <small>Médium</small>
+                    <small class="member-function">Organização das obrigações</small>
+                  </span>
+                  <em>Obrigação de fogo</em>
+                </button>
+
+                <button class="member-card" type="button">
+                  <span class="member-rank">4</span>
+                  <span class="member-photo">PR</span>
+                  <span>
+                    <strong>Priscila</strong>
+                    <small>Médium de Orixalá</small>
+                    <small class="member-function">Estoque e controle de itens</small>
+                  </span>
+                  <em>Orixalá</em>
+                </button>
+
+                <button class="member-card" type="button">
+                  <span class="member-rank">5</span>
+                  <span class="member-photo">MO</span>
+                  <span>
+                    <strong>Monique</strong>
+                    <small>Médium de Orixalá</small>
+                    <small class="member-function">Calendário geral</small>
+                  </span>
+                  <em>Orixalá</em>
+                </button>
+
+                <button class="member-card" type="button">
+                  <span class="member-rank">6</span>
+                  <span class="member-photo">KL</span>
+                  <span>
+                    <strong>Kelly</strong>
+                    <small>Médium</small>
+                    <small class="member-function">Obras, manutenção e limpeza</small>
+                  </span>
+                  <em>Obrigação de cabeça</em>
+                </button>
+
+                <button class="member-card" type="button">
+                  <span class="member-rank">7</span>
+                  <span class="member-photo">VN</span>
+                  <span>
+                    <strong>Vanessa</strong>
+                    <small>Médium</small>
+                    <small class="member-function">Estoque e controle de itens</small>
+                  </span>
+                  <em>Obrigação de cabeça</em>
+                </button>
+
+                <button class="member-card" type="button">
+                  <span class="member-rank">8</span>
+                  <span class="member-photo">FL</span>
+                  <span>
+                    <strong>Flávia</strong>
+                    <small>Médium</small>
+                    <small class="member-function">A definir</small>
+                  </span>
+                  <em>Obrigação de cabeça</em>
+                </button>
+
+                <button class="member-card" type="button">
+                  <span class="member-rank">9</span>
+                  <span class="member-photo">LS</span>
+                  <span>
+                    <strong>Larissa</strong>
+                    <small>Médium</small>
+                    <small class="member-function">Consultas gerais do terreiro</small>
+                  </span>
+                  <em><span class="role-badge admin">ADM</span> Obrigação de cabeça</em>
+                </button>
+
+                <button class="member-card" type="button">
+                  <span class="member-rank">10</span>
+                  <span class="member-photo">LC</span>
+                  <span>
+                    <strong>Luciana</strong>
+                    <small>Preparando obrigação de cabeça</small>
+                    <small class="member-function">Obras, manutenção e limpeza</small>
+                  </span>
+                  <em>Mão de Pemba</em>
+                </button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Cadastro do perfil</h2>
+                <span class="tag confirmed">Editável pelo admin</span>
+              </div>
+
+              <div class="photo-uploader">
+                <div class="photo-preview" id="profile-photo-preview">Foto</div>
+                <label class="secondary-button" for="profile-photo-input">Escolher foto</label>
+                <input accept="image/*" id="profile-photo-input" type="file" />
+              </div>
+
+              <form class="profile-form">
+                <label class="field">
+                  <span>Nome</span>
+                  <input id="profile-name" type="text" value="Larissa" />
+                </label>
+
+                <label class="field">
+                  <span>Posição na hierarquia</span>
+                  <input id="profile-rank" type="number" min="1" value="10" />
+                </label>
+
+                <label class="field">
+                  <span>Marcador do perfil</span>
+                  <input id="profile-marker" maxlength="2" type="text" value="✦" />
+                </label>
+
+                <label class="field full">
+                  <span>Papel espiritual</span>
+                  <input id="profile-role" type="text" value="Médium" />
+                </label>
+
+                <label class="field full">
+                  <span>Função atual na corrente</span>
+                  <input id="profile-responsibility" type="text" value="Consultas gerais do terreiro" />
+                </label>
+
+                <label class="field full">
+                  <span>Permissão no app</span>
+                  <select id="profile-permission">
+                    <option>Médium</option>
+                    <option>Coordenação</option>
+                    <option selected>Administrador</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>Obrigação atual</span>
+                  <select id="profile-obligation">
+                    <option>Não se aplica</option>
+                    <option>Coordenação espiritual</option>
+                    <option>Ogã</option>
+                    <option>Iniciação</option>
+                    <option>Batismo</option>
+                    <option>Mão de Pemba</option>
+                    <option selected>Obrigação de cabeça</option>
+                    <option>Orixalá</option>
+                    <option>Obrigação de fogo</option>
+                    <option>Obrigação de faca</option>
+                    <option>Camarinha</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>Próxima etapa</span>
+                  <select id="profile-next">
+                    <option>Sem previsão</option>
+                    <option>Iniciação</option>
+                    <option>Batismo</option>
+                    <option>Mão de Pemba</option>
+                    <option>Obrigação de cabeça</option>
+                    <option selected>Orixalá</option>
+                    <option>Obrigação de fogo</option>
+                    <option>Obrigação de faca</option>
+                    <option>Camarinha</option>
+                  </select>
+                </label>
+
+                <label class="field full">
+                  <span>Observações administrativas</span>
+                  <textarea id="profile-notes">Registrar orientações, desenvolvimento e pontos de acompanhamento.</textarea>
+                </label>
+
+                <label class="field full">
+                  <span>Sobre o médium</span>
+                  <textarea id="profile-about">Espaço para o médium falar sobre sua caminhada e atuação no terreiro.</textarea>
+                </label>
+
+                <label class="field">
+                  <span>Pai de cabeça</span>
+                  <input id="profile-head-father" type="text" value="" />
+                </label>
+
+                <label class="field">
+                  <span>Mãe de cabeça</span>
+                  <input id="profile-head-mother" type="text" value="" />
+                </label>
+              </form>
+
+              <div class="form-actions">
+                <button class="secondary-button" id="prev-profile-button" type="button">Anterior</button>
+                <button class="secondary-button" id="next-profile-button" type="button">Próximo perfil</button>
+                <button class="primary-button" id="save-profile-button" type="button">Salvar perfil</button>
+              </div>
+              <p class="save-status" id="profile-save-status" aria-live="polite"></p>
+
+              <div class="profile-feedback-box">
+                <div class="panel-heading">
+                  <h2>Feedbacks positivos do perfil</h2>
+                  <span class="tag">Anônimos</span>
+                </div>
+                <div class="feedback-list" id="selected-profile-feedback-list"></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="estudos">
+          <div class="summary-grid">
+            <article class="metric">
+              <span>Estudos disponíveis</span>
+              <strong id="study-count">2</strong>
+              <small>Materiais anexados pela administração</small>
+            </article>
+            <article class="metric">
+              <span>Entregas abertas</span>
+              <strong id="study-task-count">1</strong>
+              <small>Atividades com prazo</small>
+            </article>
+            <article class="metric">
+              <span>Visão do médium</span>
+              <strong>Leitura</strong>
+              <small>Sem edição dos anexos</small>
+            </article>
+          </div>
+
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Estudos e entregas</h2>
+                <span class="tag">Visível para a corrente</span>
+              </div>
+              <div class="study-list" id="study-list"></div>
+            </article>
+
+            <article class="panel admin-only">
+              <div class="panel-heading">
+                <h2>Anexar estudo</h2>
+                <span class="tag confirmed">Admin</span>
+              </div>
+
+              <form class="profile-form">
+                <label class="field full">
+                  <span>Título</span>
+                  <input id="study-title" type="text" value="Novo estudo" />
+                </label>
+
+                <label class="field">
+                  <span>Tipo</span>
+                  <select id="study-type">
+                    <option>Estudo</option>
+                    <option>Entrega</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>Prazo</span>
+                  <input id="study-date" type="date" />
+                </label>
+
+                <label class="field full">
+                  <span>Descrição</span>
+                  <textarea id="study-description">Descreva o material ou a entrega para os médiuns.</textarea>
+                </label>
+
+                <label class="field full">
+                  <span>Anexo</span>
+                  <input id="study-file" type="file" />
+                </label>
+              </form>
+
+              <button class="primary-button" id="add-study-button" type="button">Salvar estudo</button>
+              <p class="save-status" id="study-save-status" aria-live="polite"></p>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="forum">
+          <div class="summary-grid">
+            <article class="metric">
+              <span>Dúvidas abertas</span>
+              <strong id="forum-count">1</strong>
+              <small>Conversas da corrente</small>
+            </article>
+            <article class="metric">
+              <span>Respostas</span>
+              <strong id="forum-reply-count">1</strong>
+              <small>Participações registradas</small>
+            </article>
+            <article class="metric">
+              <span>Identificação</span>
+              <strong>Anônima</strong>
+              <small>Para perguntar com tranquilidade</small>
+            </article>
+          </div>
+
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Fórum de dúvidas</h2>
+                <span class="tag">Visível para a corrente</span>
+              </div>
+              <div class="forum-list" id="forum-list"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Nova dúvida</h2>
+                <span class="tag confirmed">Anônimo</span>
+              </div>
+
+              <form class="profile-form">
+                <label class="field full">
+                  <span>Título</span>
+                  <input id="forum-title" type="text" value="" placeholder="Ex.: Dúvida sobre preparo para a gira" />
+                </label>
+
+                <label class="field full">
+                  <span>Dúvida</span>
+                  <textarea id="forum-message" placeholder="Escreva sua dúvida para a corrente responder."></textarea>
+                </label>
+              </form>
+
+              <button class="primary-button" id="add-forum-topic-button" type="button">Publicar dúvida</button>
+              <p class="save-status" id="forum-save-status" aria-live="polite"></p>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="perfil">
+          <div class="profile-header">
+            <span class="profile-avatar" id="self-profile-avatar">LS</span>
+            <div>
+              <p class="eyebrow">Perfil do médium</p>
+              <h2 id="self-profile-name">Larissa</h2>
+              <p id="self-profile-summary">Médium - Obrigação de cabeça - próxima etapa: Orixalá - função: Consultas gerais do terreiro</p>
+            </div>
+          </div>
+
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Editar meu perfil</h2>
+                <span class="tag">Visível para mim</span>
+              </div>
+
+              <div class="photo-uploader">
+                <div class="photo-preview" id="self-photo-preview">Foto</div>
+                <label class="secondary-button" for="self-photo-input">Escolher foto</label>
+                <input accept="image/*" id="self-photo-input" type="file" />
+              </div>
+
+              <form class="profile-form">
+                <label class="field">
+                  <span>Nome</span>
+                  <input id="self-name" type="text" value="Larissa" />
+                </label>
+
+                <label class="field">
+                  <span>Marcador</span>
+                  <input id="self-marker" maxlength="2" type="text" value="✦" />
+                </label>
+
+                <label class="field full">
+                  <span>Sobre mim</span>
+                  <textarea id="self-about">Escreva um pouco sobre sua caminhada, suas firmezas e seu desenvolvimento.</textarea>
+                </label>
+
+                <label class="field">
+                  <span>Pai de cabeça</span>
+                  <input id="self-head-father" type="text" />
+                </label>
+
+                <label class="field">
+                  <span>Mãe de cabeça</span>
+                  <input id="self-head-mother" type="text" />
+                </label>
+              </form>
+
+              <button class="primary-button" id="save-self-profile-button" type="button">Salvar meu perfil</button>
+              <p class="save-status" id="self-save-status" aria-live="polite"></p>
+            </article>
+
+            <article class="panel">
+              <h2>Histórico recente</h2>
+              <div class="score-row">
+                <span>Presença nos últimos eventos</span>
+                <strong>86%</strong>
+              </div>
+              <div class="score-row">
+                <span>Itens entregues</span>
+                <strong>5 de 5</strong>
+              </div>
+              <div class="score-row">
+                <span>Feedbacks positivos</span>
+                <strong id="my-feedback-count">0</strong>
+              </div>
+              <div class="score-row">
+                <span>Posição na hierarquia</span>
+                <strong id="self-rank">9</strong>
+              </div>
+              <div class="score-row">
+                <span>Função atual</span>
+                <strong id="self-responsibility">Consultas gerais do terreiro</strong>
+              </div>
+              <div class="score-row">
+                <span>Permissão no app</span>
+                <strong>ADM</strong>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Enviar feedback anônimo</h2>
+                <span class="tag">Corrente</span>
+              </div>
+
+              <form class="profile-form">
+                <label class="field">
+                  <span>Para</span>
+                  <select id="feedback-recipient"></select>
+                </label>
+
+                <label class="field full">
+                  <span>Mensagem</span>
+                  <textarea id="feedback-message" placeholder="Escreva um feedback positivo e respeitoso."></textarea>
+                </label>
+              </form>
+
+              <button class="primary-button" id="send-feedback-button" type="button">Enviar feedback</button>
+              <p class="save-status" id="feedback-save-status" aria-live="polite"></p>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Feedbacks positivos recebidos</h2>
+                <span class="tag confirmed">Meu perfil</span>
+              </div>
+              <div class="feedback-list" id="my-positive-feedback-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="admin">
+          <div class="summary-grid">
+            <article class="metric">
+              <span>Confirmações</span>
+              <strong>18/24</strong>
+              <small>6 pessoas ainda sem resposta</small>
+            </article>
+            <article class="metric">
+              <span>Itens pendentes</span>
+              <strong>2</strong>
+              <small>Velas e limpeza</small>
+            </article>
+            <article class="metric">
+              <span>Entregas para validar</span>
+              <strong>4</strong>
+              <small>Com foto enviada</small>
+            </article>
+          </div>
+
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Ações rápidas</h2>
+              </div>
+              <div class="admin-actions">
+                <button class="primary-button" data-screen="calendario" type="button">Criar evento</button>
+                <button class="secondary-button" data-screen="itens" type="button">Nova lista</button>
+                <button class="secondary-button" data-screen="perfis" type="button">Cadastrar perfil</button>
+                <button class="secondary-button" data-screen="perfil" type="button">Ver feedbacks</button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Administradores</h2>
+                <span class="tag confirmed">Acesso total</span>
+              </div>
+              <div class="permission-list" id="admin-permission-list">
+                <div>
+                  <strong>Thiago</strong>
+                  <small>Pai de santo</small>
+                  <span class="role-badge admin">ADM</span>
+                </div>
+                <div>
+                  <strong>Jaqueline</strong>
+                  <small>Mãe pequena e capitã</small>
+                  <span class="role-badge admin">ADM</span>
+                </div>
+                <div>
+                  <strong>Larissa</strong>
+                  <small>Médium</small>
+                  <span class="role-badge admin">ADM</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-heading">
+                <h2>Feedbacks positivos</h2>
+                <span class="tag">Administração</span>
+              </div>
+              <div class="feedback-list" id="admin-feedback-list"></div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js?v=20260701-0205"></script>
+  </body>
+</html>

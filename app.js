@@ -1,0 +1,1611 @@
+const titles = {
+  inicio: "Início",
+  calendario: "Calendário",
+  itens: "Listas de itens",
+  estudos: "Estudos",
+  forum: "Fórum",
+  perfis: "Perfis da corrente",
+  perfil: "Meu perfil",
+  admin: "Administração",
+};
+
+const profiles = [
+  {
+    id: "thiago",
+    rank: 0,
+    leader: "pai",
+    marker: "♛",
+    initials: "TH",
+    name: "Thiago",
+    role: "Pai de santo",
+    permission: "Administrador",
+    obligation: "Não se aplica",
+    next: "Sem previsão",
+    responsibility: "Condução espiritual da casa",
+    notes: "Pai de santo. Acesso total aos perfis, avaliações, calendário e listas.",
+    about: "Responsável espiritual pela casa.",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  },
+  {
+    id: "jaqueline",
+    rank: 0,
+    leader: "mae",
+    marker: "♕",
+    initials: "JQ",
+    name: "Jaqueline",
+    role: "Mãe pequena e capitã",
+    permission: "Administrador",
+    obligation: "Não se aplica",
+    next: "Sem previsão",
+    responsibility: "Projeto Terreirinho",
+    notes: "Mãe pequena e capitã. Acesso total aos perfis e apoio na coordenação.",
+    about: "Apoio direto à condução espiritual e organização da corrente.",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  },
+  {
+    id: "claudemir",
+    rank: 1,
+    leader: "",
+    marker: "✦",
+    initials: "CL",
+    name: "Claudemir",
+    role: "Pai Ogã",
+    permission: "Coordenação",
+    obligation: "Ogã",
+    next: "Sem previsão",
+    responsibility: "Obras, manutenção e limpeza",
+    notes: "Pai Ogã. Perfil disponível para acompanhamento e registros internos.",
+    about: "",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  },
+  {
+    id: "rita",
+    rank: 2,
+    leader: "",
+    marker: "✦",
+    initials: "RT",
+    name: "Rita",
+    role: "Médium",
+    responsibility: "",
+    permission: "Médium",
+    obligation: "Obrigação de faca",
+    next: "Camarinha",
+    responsibility: "Projeto Terreirinho",
+    notes: "Médium com obrigação de faca.",
+    about: "",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  },
+  {
+    id: "marcela",
+    rank: 3,
+    leader: "",
+    marker: "✦",
+    initials: "MC",
+    name: "Marcela",
+    role: "Médium",
+    permission: "Médium",
+    obligation: "Obrigação de fogo",
+    next: "Obrigação de faca",
+    responsibility: "Organização das obrigações",
+    notes: "Médium com obrigação de fogo.",
+    about: "",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  },
+  {
+    id: "priscila",
+    rank: 4,
+    leader: "",
+    marker: "✦",
+    initials: "PR",
+    name: "Priscila",
+    role: "Médium de Orixalá",
+    permission: "Médium",
+    obligation: "Orixalá",
+    next: "Obrigação de fogo",
+    responsibility: "Estoque e controle de itens",
+    notes: "Médium de Orixalá.",
+    about: "",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  },
+  {
+    id: "monique",
+    rank: 5,
+    leader: "",
+    marker: "✦",
+    initials: "MO",
+    name: "Monique",
+    role: "Médium de Orixalá",
+    permission: "Médium",
+    obligation: "Orixalá",
+    next: "Obrigação de fogo",
+    responsibility: "Calendário geral",
+    notes: "Médium de Orixalá.",
+    about: "",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  },
+  {
+    id: "kelly",
+    rank: 6,
+    leader: "",
+    marker: "✦",
+    initials: "KL",
+    name: "Kelly",
+    role: "Médium",
+    permission: "Médium",
+    obligation: "Obrigação de cabeça",
+    next: "Orixalá",
+    responsibility: "Obras, manutenção e limpeza",
+    notes: "Médium com obrigação de cabeça.",
+    about: "",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  },
+  {
+    id: "vanessa",
+    rank: 7,
+    leader: "",
+    marker: "✦",
+    initials: "VN",
+    name: "Vanessa",
+    role: "Médium",
+    permission: "Médium",
+    obligation: "Obrigação de cabeça",
+    next: "Orixalá",
+    responsibility: "Estoque e controle de itens",
+    notes: "Médium com obrigação de cabeça.",
+    about: "",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  },
+  {
+    id: "flavia",
+    rank: 8,
+    leader: "",
+    marker: "✦",
+    initials: "FL",
+    name: "Flávia",
+    role: "Médium",
+    permission: "Médium",
+    obligation: "Obrigação de cabeça",
+    next: "Orixalá",
+    responsibility: "A definir",
+    notes: "Médium cadastrada na hierarquia da corrente.",
+    about: "",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  },
+  {
+    id: "larissa",
+    rank: 9,
+    leader: "",
+    marker: "✦",
+    initials: "LS",
+    name: "Larissa",
+    role: "Médium",
+    permission: "Administrador",
+    obligation: "Obrigação de cabeça",
+    next: "Orixalá",
+    responsibility: "Consultas gerais do terreiro",
+    notes: "Administradora responsável pela montagem do app. Acesso total aos perfis.",
+    about: "Escreva um pouco sobre sua caminhada, suas firmezas e seu desenvolvimento.",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  },
+  {
+    id: "luciana",
+    rank: 10,
+    leader: "",
+    marker: "✦",
+    initials: "LC",
+    name: "Luciana",
+    role: "Preparando obrigação de cabeça",
+    permission: "Médium",
+    obligation: "Mão de Pemba",
+    next: "Obrigação de cabeça",
+    responsibility: "Obras, manutenção e limpeza",
+    notes: "Em preparação para obrigação de cabeça.",
+    about: "",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  },
+];
+
+const defaultEvents = [
+  {
+    id: "evento-1",
+    title: "Gira de desenvolvimento",
+    type: "Gira",
+    date: "2026-07-05",
+    time: "19:30",
+    place: "Terreiro",
+    description: "Gira voltada ao desenvolvimento mediúnico, com abertura da casa, firmeza, atendimento e limpeza do espaço ao final.",
+    responses: { larissa: "Vou" },
+  },
+  {
+    id: "evento-2",
+    title: "Estudo e preparação",
+    type: "Estudo",
+    date: "2026-07-08",
+    time: "20:00",
+    place: "Sala de estudos",
+    description: "Encontro de estudo e preparo para a corrente.",
+    responses: {},
+  },
+];
+
+const defaultSupplyLists = [
+  {
+    id: "lista-1",
+    title: "Lista da gira de 05 jul",
+    eventId: "evento-1",
+    items: [
+      { id: "item-1", name: "Arruda fresca", assignedTo: "Larissa", delivered: false },
+      { id: "item-2", name: "Pacote de arroz", assignedTo: "Larissa", delivered: true },
+      { id: "item-3", name: "Velas brancas", assignedTo: "", delivered: false },
+      { id: "item-4", name: "Material de limpeza", assignedTo: "", delivered: false },
+    ],
+  },
+];
+
+const defaultStudies = [
+  {
+    id: "estudo-1",
+    title: "Fundamentos da corrente",
+    type: "Estudo",
+    dueDate: "",
+    description: "Material de leitura para preparação dos próximos encontros.",
+    fileName: "fundamentos-da-corrente.pdf",
+    completed: false,
+    response: "",
+  },
+  {
+    id: "entrega-1",
+    title: "Resumo do estudo de firmeza",
+    type: "Entrega",
+    dueDate: "2026-07-08",
+    description: "Entregar um resumo com dúvidas e pontos principais do estudo.",
+    fileName: "orientacao-entrega.pdf",
+    completed: false,
+    response: "",
+  },
+];
+
+const defaultFeedbacks = [
+  {
+    id: "feedback-1",
+    toId: "larissa",
+    message: "Boa evolução na postura durante a gira e cuidado com a corrente.",
+    createdAt: "2026-07-01",
+  },
+];
+
+const defaultForumTopics = [
+  {
+    id: "forum-1",
+    title: "Dúvidas sobre preparação para a gira",
+    message: "Espaço para colocar dúvidas sobre roupa, horário, firmeza e materiais necessários.",
+    author: "Anônimo",
+    createdAt: "2026-07-01",
+    replies: [
+      {
+        id: "reply-1",
+        message: "Podemos reunir as orientações principais aqui para todo mundo consultar antes da gira.",
+        author: "Administração",
+        createdAt: "2026-07-01",
+      },
+    ],
+  },
+];
+
+const storageKey = "tecpbProfiles";
+const eventsStorageKey = "tecpbEvents";
+const supplyStorageKey = "tecpbSupplyLists";
+const studiesStorageKey = "tecpbStudies";
+const feedbackStorageKey = "tecpbFeedbacks";
+const forumStorageKey = "tecpbForumTopics";
+const removedObligation = ["Mesa", "de", "iniciação"].join(" ");
+
+const hierarchyOverrides = {
+  thiago: {
+    rank: 0,
+    leader: "pai",
+    marker: "♛",
+    initials: "TH",
+    name: "Thiago",
+    role: "Pai de santo",
+    permission: "Administrador",
+    obligation: "Não se aplica",
+    next: "Sem previsão",
+  },
+  jaqueline: {
+    rank: 0,
+    leader: "mae",
+    marker: "♕",
+    initials: "JQ",
+    name: "Jaqueline",
+    obligation: "Não se aplica",
+    next: "Sem previsão",
+  },
+  claudemir: { rank: 1, leader: "" },
+  rita: { rank: 2, leader: "" },
+  marcela: { rank: 3, leader: "" },
+  priscila: { rank: 4, leader: "" },
+  monique: { rank: 5, leader: "" },
+  kelly: { rank: 6, leader: "" },
+  vanessa: { rank: 7, leader: "" },
+  flavia: { rank: 8, leader: "" },
+  larissa: { rank: 9, leader: "", role: "Médium", permission: "Administrador" },
+  luciana: { rank: 10, leader: "", name: "Luciana" },
+};
+
+const savedProfiles = loadSavedProfiles();
+if (savedProfiles) {
+  profiles.splice(0, profiles.length, ...mergeSavedProfiles(profiles, savedProfiles));
+  persistProfiles();
+}
+
+const savedEvents = loadSavedEvents();
+const savedSupplyLists = loadSavedSupplyLists();
+const savedStudies = loadSavedStudies();
+const savedFeedbacks = loadSavedFeedbacks();
+const savedForumTopics = loadSavedForumTopics();
+const events = savedEvents?.length ? savedEvents : [...defaultEvents];
+const supplyLists = savedSupplyLists?.length ? savedSupplyLists : [...defaultSupplyLists];
+const studies = savedStudies?.length ? savedStudies : [...defaultStudies];
+const feedbacks = normalizeFeedbacks(savedFeedbacks?.length ? savedFeedbacks : defaultFeedbacks);
+const forumTopics = savedForumTopics?.length ? savedForumTopics : [...defaultForumTopics];
+
+const navButtons = document.querySelectorAll("[data-screen]");
+const screens = document.querySelectorAll(".screen");
+const pageTitle = document.querySelector("#page-title");
+const hierarchyList = document.querySelector("#hierarchy-list");
+const profileCount = document.querySelector("#profile-count");
+const adminCount = document.querySelector("#admin-count");
+const adminNames = document.querySelector("#admin-names");
+const adminPermissionList = document.querySelector("#admin-permission-list");
+const saveStatus = document.querySelector("#profile-save-status");
+const photoInput = document.querySelector("#profile-photo-input");
+const photoPreview = document.querySelector("#profile-photo-preview");
+const calendarYear = document.querySelector("#calendar-year");
+const calendarYearLabel = document.querySelector("#calendar-year-label");
+const eventList = document.querySelector("#event-list");
+const eventCount = document.querySelector("#event-count");
+const eventDetailTitle = document.querySelector("#event-detail-title");
+const eventDetailType = document.querySelector("#event-detail-type");
+const eventDetailDescription = document.querySelector("#event-detail-description");
+const eventPresenceStatus = document.querySelector("#event-presence-status");
+const eventSaveStatus = document.querySelector("#event-save-status");
+const myEventStatus = document.querySelector("#my-event-status");
+const supplyList = document.querySelector("#supply-list");
+const supplyListCount = document.querySelector("#supply-list-count");
+const supplyPendingCount = document.querySelector("#supply-pending-count");
+const mySupplyCount = document.querySelector("#my-supply-count");
+const supplyEvent = document.querySelector("#supply-event");
+const supplySaveStatus = document.querySelector("#supply-save-status");
+const studyList = document.querySelector("#study-list");
+const studyCount = document.querySelector("#study-count");
+const studyTaskCount = document.querySelector("#study-task-count");
+const studySaveStatus = document.querySelector("#study-save-status");
+const forumList = document.querySelector("#forum-list");
+const forumCount = document.querySelector("#forum-count");
+const forumReplyCount = document.querySelector("#forum-reply-count");
+const forumStatus = document.querySelector("#forum-save-status");
+const forumFields = {
+  title: document.querySelector("#forum-title"),
+  message: document.querySelector("#forum-message"),
+};
+const feedbackFields = {
+  recipient: document.querySelector("#feedback-recipient"),
+  message: document.querySelector("#feedback-message"),
+  status: document.querySelector("#feedback-save-status"),
+  myPositiveList: document.querySelector("#my-positive-feedback-list"),
+  selectedProfileList: document.querySelector("#selected-profile-feedback-list"),
+  adminList: document.querySelector("#admin-feedback-list"),
+  myFeedbackCount: document.querySelector("#my-feedback-count"),
+};
+
+const fields = {
+  name: document.querySelector("#profile-name"),
+  rank: document.querySelector("#profile-rank"),
+  marker: document.querySelector("#profile-marker"),
+  role: document.querySelector("#profile-role"),
+  responsibility: document.querySelector("#profile-responsibility"),
+  permission: document.querySelector("#profile-permission"),
+  obligation: document.querySelector("#profile-obligation"),
+  next: document.querySelector("#profile-next"),
+  notes: document.querySelector("#profile-notes"),
+  about: document.querySelector("#profile-about"),
+  headFather: document.querySelector("#profile-head-father"),
+  headMother: document.querySelector("#profile-head-mother"),
+};
+
+const selfFields = {
+  avatar: document.querySelector("#self-profile-avatar"),
+  nameHeading: document.querySelector("#self-profile-name"),
+  summary: document.querySelector("#self-profile-summary"),
+  photoInput: document.querySelector("#self-photo-input"),
+  photoPreview: document.querySelector("#self-photo-preview"),
+  name: document.querySelector("#self-name"),
+  marker: document.querySelector("#self-marker"),
+  about: document.querySelector("#self-about"),
+  headFather: document.querySelector("#self-head-father"),
+  headMother: document.querySelector("#self-head-mother"),
+  responsibility: document.querySelector("#self-responsibility"),
+  rank: document.querySelector("#self-rank"),
+  status: document.querySelector("#self-save-status"),
+};
+
+const studyFields = {
+  title: document.querySelector("#study-title"),
+  type: document.querySelector("#study-type"),
+  date: document.querySelector("#study-date"),
+  description: document.querySelector("#study-description"),
+  file: document.querySelector("#study-file"),
+};
+
+const eventFields = {
+  title: document.querySelector("#event-title"),
+  type: document.querySelector("#event-type"),
+  date: document.querySelector("#event-date"),
+  time: document.querySelector("#event-time"),
+  place: document.querySelector("#event-place"),
+  description: document.querySelector("#event-description"),
+};
+
+const supplyFields = {
+  title: document.querySelector("#supply-list-title"),
+  event: document.querySelector("#supply-event"),
+  items: document.querySelector("#supply-items"),
+};
+
+let currentProfileId = "larissa";
+let currentMode = "admin";
+let selectedEventId = events[0]?.id || "";
+
+function loadSavedProfiles() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
+    return Array.isArray(saved) ? saved : null;
+  } catch {
+    return null;
+  }
+}
+
+function loadSavedEvents() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(eventsStorageKey) || "null");
+    return Array.isArray(saved) ? saved : null;
+  } catch {
+    return null;
+  }
+}
+
+function loadSavedSupplyLists() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(supplyStorageKey) || "null");
+    return Array.isArray(saved) ? saved : null;
+  } catch {
+    return null;
+  }
+}
+
+function loadSavedStudies() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(studiesStorageKey) || "null");
+    return Array.isArray(saved) ? saved : null;
+  } catch {
+    return null;
+  }
+}
+
+function loadSavedFeedbacks() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(feedbackStorageKey) || "null");
+    return Array.isArray(saved) ? saved : null;
+  } catch {
+    return null;
+  }
+}
+
+function loadSavedForumTopics() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(forumStorageKey) || "null");
+    return Array.isArray(saved) ? saved : null;
+  } catch {
+    return null;
+  }
+}
+
+function persistProfiles() {
+  localStorage.setItem(storageKey, JSON.stringify(profiles));
+}
+
+function persistEvents() {
+  localStorage.setItem(eventsStorageKey, JSON.stringify(events));
+}
+
+function persistSupplyLists() {
+  localStorage.setItem(supplyStorageKey, JSON.stringify(supplyLists));
+}
+
+function persistStudies() {
+  localStorage.setItem(studiesStorageKey, JSON.stringify(studies));
+}
+
+function persistFeedbacks() {
+  localStorage.setItem(feedbackStorageKey, JSON.stringify(feedbacks));
+}
+
+function persistForumTopics() {
+  localStorage.setItem(forumStorageKey, JSON.stringify(forumTopics));
+}
+
+function normalizeFeedbacks(items) {
+  return items
+    .filter((feedback) => feedback.type !== "negative")
+    .map((feedback) => ({
+      id: feedback.id || `feedback-${Date.now()}`,
+      toId: feedback.toId,
+      message: feedback.message || "",
+      createdAt: feedback.createdAt || new Date().toISOString().slice(0, 10),
+    }))
+    .filter((feedback) => feedback.toId && feedback.message);
+}
+
+function migrateSavedProfile(profile) {
+  if (profile.id !== "luciano") return profile;
+  return {
+    ...profile,
+    id: "luciana",
+    name: profile.name === "Luciano" ? "Luciana" : profile.name,
+  };
+}
+
+function mergeSavedProfiles(defaultProfiles, savedProfiles) {
+  const defaultIds = new Set(defaultProfiles.map((profile) => profile.id));
+  const savedById = new Map();
+
+  savedProfiles.map(migrateSavedProfile).forEach((profile) => {
+    savedById.set(profile.id, profile);
+  });
+
+  const mergedDefaults = defaultProfiles.map((defaultProfile) => {
+    const savedProfile = savedById.get(defaultProfile.id);
+    return normalizeProfile({ ...defaultProfile, ...(savedProfile || {}) });
+  });
+
+  const extraProfiles = [...savedById.values()]
+    .filter((profile) => !defaultIds.has(profile.id))
+    .map(normalizeProfile);
+
+  return [...mergedDefaults, ...extraProfiles];
+}
+
+function normalizeProfile(profile) {
+  const normalized = {
+    marker: "✦",
+    about: "",
+    headFather: "",
+    headMother: "",
+    leader: "",
+    responsibility: "",
+    ...profile,
+    ...(hierarchyOverrides[profile.id] || {}),
+  };
+
+  if (normalized.obligation === removedObligation) normalized.obligation = "Batismo";
+  if (normalized.next === removedObligation) normalized.next = "Batismo";
+  return normalized;
+}
+
+function isScreenAllowed(screenId) {
+  if (currentMode === "admin") return true;
+  return ["calendario", "itens", "estudos", "forum", "perfil"].includes(screenId);
+}
+
+function showScreen(screenId) {
+  const safeScreen = isScreenAllowed(screenId) ? screenId : "calendario";
+
+  screens.forEach((screen) => {
+    screen.classList.toggle("active", screen.id === safeScreen);
+  });
+
+  document.querySelectorAll(".nav-item").forEach((button) => {
+    button.classList.toggle("active", button.dataset.screen === safeScreen);
+  });
+
+  pageTitle.textContent = titles[safeScreen] || "TECPB";
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.body.dataset.mode = mode;
+
+  document.querySelectorAll(".role-switch button").forEach((button) => {
+    const label = button.textContent.trim();
+    button.classList.toggle(
+      "selected",
+      (mode === "admin" && label === "Admin") || (mode === "medium" && label === "Médium"),
+    );
+  });
+
+  navButtons.forEach((button) => {
+    const adminOnly = button.dataset.adminOnly === "true";
+    button.classList.toggle("is-hidden", mode === "medium" && adminOnly);
+  });
+
+  const activeScreen = document.querySelector(".screen.active")?.id || "calendario";
+  showScreen(activeScreen);
+}
+
+function orderedProfiles() {
+  return [...profiles].sort((a, b) => {
+    const leaderOrder = { pai: 0, mae: 1 };
+    const aLeader = a.leader in leaderOrder;
+    const bLeader = b.leader in leaderOrder;
+
+    if (aLeader && bLeader) return leaderOrder[a.leader] - leaderOrder[b.leader];
+    if (aLeader) return -1;
+    if (bLeader) return 1;
+    return a.rank - b.rank;
+  });
+}
+
+function initialsFromName(name) {
+  return name
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join("");
+}
+
+function findProfile(profileId) {
+  return profiles.find((profile) => profile.id === profileId);
+}
+
+function selfProfile() {
+  return findProfile("larissa");
+}
+
+function setSelectValue(select, value) {
+  if (!select) return;
+  const hasOption = [...select.options].some((option) => option.value === value);
+  if (!hasOption) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    select.append(option);
+  }
+  select.value = value;
+}
+
+function renderPhoto(target, profile) {
+  if (!target) return;
+  target.textContent = "";
+  if (profile.photo) {
+    const image = document.createElement("img");
+    image.src = profile.photo;
+    image.alt = `Foto de ${profile.name}`;
+    target.append(image);
+    return;
+  }
+
+  target.textContent = profile.initials || initialsFromName(profile.name) || "FT";
+}
+
+function createMarker(profile) {
+  const marker = document.createElement("span");
+  marker.className = "profile-marker";
+  marker.textContent = profile.marker || "✦";
+  return marker;
+}
+
+function createProfileCard(profile) {
+  const card = document.createElement("button");
+  card.className = "member-card";
+  card.type = "button";
+  card.dataset.profileId = profile.id;
+  card.classList.toggle("current", profile.id === currentProfileId);
+  if (profile.leader) card.classList.add("leader-card", `leader-${profile.leader}`);
+
+  const rank = document.createElement("span");
+  if (profile.leader) {
+    rank.className = `member-crown ${profile.leader === "pai" ? "crown-large" : "crown-small"}`;
+    rank.textContent = profile.marker || (profile.leader === "pai" ? "♛" : "♕");
+  } else {
+    rank.className = "member-rank";
+    rank.textContent = profile.rank;
+  }
+
+  const photo = document.createElement("span");
+  photo.className = "member-photo";
+  renderPhoto(photo, profile);
+
+  const text = document.createElement("span");
+  const name = document.createElement("strong");
+  if (!profile.leader) name.append(createMarker(profile), ` ${profile.name}`);
+  else name.textContent = profile.name;
+  const role = document.createElement("small");
+  role.textContent = profile.role;
+  text.append(name, role);
+  if (profile.responsibility) {
+    const responsibility = document.createElement("small");
+    responsibility.className = "member-function";
+    responsibility.textContent = profile.responsibility;
+    text.append(responsibility);
+  }
+
+  const status = document.createElement("em");
+  if (profile.leader) {
+    const badge = document.createElement("span");
+    badge.className = "role-badge admin";
+    badge.textContent = "ADM";
+    status.append(badge);
+  } else if (profile.permission === "Administrador") {
+    const badge = document.createElement("span");
+    badge.className = "role-badge admin";
+    badge.textContent = "ADM";
+    status.append(badge, ` ${profile.obligation}`);
+  } else {
+    status.textContent = profile.obligation;
+  }
+
+  card.append(rank, photo, text, status);
+  card.addEventListener("click", () => loadProfile(profile.id));
+  return card;
+}
+
+function updateAdminSummary() {
+  const admins = orderedProfiles().filter((profile) => profile.permission === "Administrador");
+
+  if (profileCount) profileCount.textContent = profiles.length;
+  if (adminCount) adminCount.textContent = admins.length;
+  if (adminNames) adminNames.textContent = admins.map((profile) => profile.name).join(", ");
+
+  if (!adminPermissionList) return;
+  adminPermissionList.textContent = "";
+
+  admins.forEach((profile) => {
+    const item = document.createElement("div");
+    const name = document.createElement("strong");
+    const description = document.createElement("small");
+
+    name.textContent = profile.name;
+    description.textContent = profile.role;
+    const badge = document.createElement("span");
+    badge.className = "role-badge admin";
+    badge.textContent = "ADM";
+    item.append(name, description, badge);
+    adminPermissionList.append(item);
+  });
+}
+
+function renderAllProfiles() {
+  if (!hierarchyList) return;
+
+  hierarchyList.textContent = "";
+  orderedProfiles().forEach((profile) => {
+    hierarchyList.append(createProfileCard(profile));
+  });
+
+  updateAdminSummary();
+}
+
+function fillPhotoPreview(profile) {
+  if (!photoPreview) return;
+  renderPhoto(photoPreview, { ...profile, initials: "Foto" });
+  if (!profile.photo) {
+    photoPreview.textContent = "Foto";
+  }
+}
+
+function setLeaderEditingState(profile) {
+  const rankField = fields.rank?.closest(".field");
+  const rankLabel = rankField?.querySelector("span");
+
+  if (!fields.rank || !rankLabel) return;
+
+  if (profile.leader) {
+    rankLabel.textContent = "Liderança";
+    fields.rank.value = "";
+    fields.rank.placeholder = "Sem posição";
+    fields.rank.disabled = true;
+  } else {
+    rankLabel.textContent = "Posição na hierarquia";
+    fields.rank.disabled = false;
+    fields.rank.placeholder = "";
+    fields.rank.value = profile.rank;
+  }
+}
+
+function loadProfile(profileId) {
+  const profile = findProfile(profileId);
+  if (!profile) return;
+
+  currentProfileId = profile.id;
+  document.querySelectorAll(".member-card").forEach((card) => {
+    card.classList.toggle("current", card.dataset.profileId === profile.id);
+  });
+
+  fields.name.value = profile.name;
+  fields.marker.value = profile.marker || "✦";
+  fields.role.value = profile.role;
+  if (fields.responsibility) fields.responsibility.value = profile.responsibility || "";
+  setSelectValue(fields.permission, profile.permission);
+  setSelectValue(fields.obligation, profile.obligation);
+  setSelectValue(fields.next, profile.next);
+  fields.notes.value = profile.notes;
+  fields.about.value = profile.about || "";
+  fields.headFather.value = profile.headFather || "";
+  fields.headMother.value = profile.headMother || "";
+  setLeaderEditingState(profile);
+  if (photoInput) photoInput.value = "";
+  fillPhotoPreview(profile);
+  renderFeedback();
+  if (saveStatus) saveStatus.textContent = `Editando ${profile.name}`;
+}
+
+function saveCurrentProfile() {
+  const profile = findProfile(currentProfileId);
+  if (!profile) return;
+
+  profile.name = fields.name.value.trim() || profile.name;
+  if (!profile.leader) profile.rank = Number(fields.rank.value) || profile.rank;
+  profile.marker = fields.marker.value.trim() || (profile.leader === "pai" ? "♛" : profile.leader === "mae" ? "♕" : "✦");
+  profile.role = fields.role.value.trim() || "Médium";
+  profile.responsibility = fields.responsibility?.value.trim() || "";
+  profile.permission = fields.permission.value;
+  profile.obligation = profile.leader ? "Não se aplica" : fields.obligation.value;
+  profile.next = profile.leader ? "Sem previsão" : fields.next.value;
+  profile.notes = fields.notes.value.trim();
+  profile.about = fields.about.value.trim();
+  profile.headFather = fields.headFather.value.trim();
+  profile.headMother = fields.headMother.value.trim();
+  profile.initials = initialsFromName(profile.name) || profile.initials;
+
+  persistProfiles();
+  renderAllProfiles();
+  loadProfile(profile.id);
+  renderSelfProfile();
+  renderFeedback();
+  if (saveStatus) saveStatus.textContent = `${profile.name} foi atualizado no protótipo.`;
+}
+
+function createNewProfile() {
+  const nextRank = Math.max(0, ...profiles.filter((profile) => !profile.leader).map((profile) => profile.rank)) + 1;
+  const id = `perfil-${Date.now()}`;
+  const profile = {
+    id,
+    rank: nextRank,
+    leader: "",
+    marker: "✦",
+    initials: "NP",
+    name: "Novo perfil",
+    role: "Médium",
+    permission: "Médium",
+    obligation: "Iniciação",
+    next: "Batismo",
+    notes: "Novo perfil em preenchimento.",
+    about: "",
+    headFather: "",
+    headMother: "",
+    photo: "",
+  };
+
+  profiles.push(profile);
+  currentProfileId = profile.id;
+  persistProfiles();
+  renderAllProfiles();
+  loadProfile(profile.id);
+  renderFeedback();
+}
+
+function moveProfile(direction) {
+  const ordered = orderedProfiles();
+  const currentIndex = ordered.findIndex((profile) => profile.id === currentProfileId);
+  if (currentIndex === -1) return;
+
+  const nextIndex = (currentIndex + direction + ordered.length) % ordered.length;
+  loadProfile(ordered[nextIndex].id);
+}
+
+function renderSelfProfile() {
+  const profile = selfProfile();
+  if (!profile) return;
+
+  renderPhoto(selfFields.avatar, profile);
+  renderPhoto(selfFields.photoPreview, { ...profile, initials: "Foto" });
+  if (!profile.photo && selfFields.photoPreview) selfFields.photoPreview.textContent = "Foto";
+
+  selfFields.nameHeading.textContent = profile.name;
+  const currentFunction = profile.responsibility ? ` - função: ${profile.responsibility}` : "";
+  selfFields.summary.textContent = `${profile.role} - ${profile.obligation} - próxima etapa: ${profile.next}${currentFunction}`;
+  selfFields.name.value = profile.name;
+  selfFields.marker.value = profile.marker || "✦";
+  selfFields.about.value = profile.about || "";
+  selfFields.headFather.value = profile.headFather || "";
+  selfFields.headMother.value = profile.headMother || "";
+  if (selfFields.responsibility) selfFields.responsibility.textContent = profile.responsibility || "A definir";
+  if (selfFields.rank) selfFields.rank.textContent = profile.rank || "Sem posição";
+
+  const userName = document.querySelector(".user-pill strong");
+  const userRole = document.querySelector(".user-pill small");
+  const userAvatar = document.querySelector(".user-pill .avatar");
+  if (userName) userName.textContent = profile.name;
+  if (userRole) userRole.textContent = profile.permission === "Administrador" ? "Administradora" : profile.role;
+  if (userAvatar) renderPhoto(userAvatar, profile);
+}
+
+function saveSelfProfile() {
+  const profile = selfProfile();
+  if (!profile) return;
+
+  profile.name = selfFields.name.value.trim() || profile.name;
+  profile.marker = selfFields.marker.value.trim() || "✦";
+  profile.about = selfFields.about.value.trim();
+  profile.headFather = selfFields.headFather.value.trim();
+  profile.headMother = selfFields.headMother.value.trim();
+  profile.initials = initialsFromName(profile.name) || profile.initials;
+
+  persistProfiles();
+  renderSelfProfile();
+  renderAllProfiles();
+  renderFeedback();
+  if (currentProfileId === profile.id) loadProfile(profile.id);
+  if (selfFields.status) selfFields.status.textContent = "Seu perfil foi atualizado no protótipo.";
+}
+
+function formatDate(dateValue) {
+  if (!dateValue) return "Sem prazo";
+  const [year, month, day] = dateValue.split("-");
+  return `${day}/${month}/${year}`;
+}
+
+function eventYear(event) {
+  return Number((event.date || "").slice(0, 4)) || new Date().getFullYear();
+}
+
+function orderedEvents() {
+  return [...events].sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
+}
+
+function selectedYear() {
+  return Number(calendarYear?.value) || new Date().getFullYear();
+}
+
+function renderCalendarYears() {
+  if (!calendarYear) return;
+
+  const current = new Date().getFullYear();
+  const years = new Set([current, current + 1, current + 2, ...events.map(eventYear)]);
+  const currentSelection = calendarYear.value || String(current);
+
+  calendarYear.textContent = "";
+  [...years].sort().forEach((year) => {
+    const option = document.createElement("option");
+    option.value = year;
+    option.textContent = year;
+    calendarYear.append(option);
+  });
+
+  calendarYear.value = years.has(Number(currentSelection)) ? currentSelection : String(current);
+  if (calendarYearLabel) calendarYearLabel.textContent = calendarYear.value;
+}
+
+function eventDateBlock(event) {
+  const [, month, day] = event.date.split("-");
+  const months = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+  return { day, month: months[Number(month) - 1] || "DATA" };
+}
+
+function renderEvents() {
+  if (!eventList) return;
+
+  renderCalendarYears();
+  const year = selectedYear();
+  const visibleEvents = orderedEvents().filter((event) => eventYear(event) === year);
+
+  eventList.textContent = "";
+  visibleEvents.forEach((event) => {
+    const card = document.createElement("article");
+    card.className = "event-card";
+    card.classList.toggle("selected-event", event.id === selectedEventId);
+
+    const block = document.createElement("div");
+    block.className = event.type === "Estudo" ? "date-block muted" : "date-block";
+    const dateParts = eventDateBlock(event);
+    block.innerHTML = `<strong>${dateParts.day}</strong><span>${dateParts.month}</span>`;
+
+    const body = document.createElement("div");
+    const title = document.createElement("h2");
+    title.textContent = event.title;
+    const meta = document.createElement("p");
+    meta.textContent = `${formatDate(event.date)}, ${event.time || "--:--"} - ${event.place || "Terreiro"}`;
+    const tags = document.createElement("div");
+    tags.className = "status-row";
+    const myResponse = event.responses?.larissa || "Aguardando resposta";
+    const responseTag = document.createElement("span");
+    responseTag.className = myResponse === "Vou" ? "tag confirmed" : myResponse === "Não vou" ? "tag pending" : "tag";
+    responseTag.textContent = myResponse;
+    const countTag = document.createElement("span");
+    countTag.className = "tag";
+    countTag.textContent = `${Object.keys(event.responses || {}).length} respostas`;
+    tags.append(responseTag, countTag);
+    body.append(title, meta, tags);
+
+    card.append(block, body);
+    card.addEventListener("click", () => selectEvent(event.id));
+    eventList.append(card);
+  });
+
+  if (!visibleEvents.some((event) => event.id === selectedEventId)) {
+    selectedEventId = visibleEvents[0]?.id || events[0]?.id || "";
+  }
+
+  if (eventCount) eventCount.textContent = visibleEvents.length;
+  selectEvent(selectedEventId, false);
+  populateSupplyEvents();
+}
+
+function selectEvent(eventId, rerender = true) {
+  const event = events.find((item) => item.id === eventId);
+  if (!event) {
+    if (eventDetailTitle) eventDetailTitle.textContent = "Detalhes do evento";
+    if (eventDetailDescription) eventDetailDescription.textContent = "Nenhum evento cadastrado para este ano.";
+    return;
+  }
+
+  selectedEventId = event.id;
+  if (eventDetailTitle) eventDetailTitle.textContent = event.title;
+  if (eventDetailType) eventDetailType.textContent = event.type;
+  if (eventDetailDescription) {
+    eventDetailDescription.textContent = `${formatDate(event.date)}, ${event.time || "--:--"} - ${event.place || "Terreiro"}. ${event.description}`;
+  }
+  const response = event.responses?.larissa || "Pendente";
+  if (eventPresenceStatus) eventPresenceStatus.textContent = `Sua resposta: ${response}`;
+  if (myEventStatus) myEventStatus.textContent = response;
+
+  if (rerender) renderEvents();
+}
+
+function setEventPresence(response) {
+  const event = events.find((item) => item.id === selectedEventId);
+  if (!event) return;
+  event.responses = event.responses || {};
+  event.responses.larissa = response;
+  persistEvents();
+  selectEvent(event.id);
+}
+
+function addEvent() {
+  const event = {
+    id: `evento-${Date.now()}`,
+    title: eventFields.title.value.trim() || "Novo evento",
+    type: eventFields.type.value,
+    date: eventFields.date.value || `${new Date().getFullYear()}-01-01`,
+    time: eventFields.time.value || "19:30",
+    place: eventFields.place.value.trim() || "Terreiro",
+    description: eventFields.description.value.trim(),
+    responses: {},
+  };
+
+  events.push(event);
+  selectedEventId = event.id;
+  persistEvents();
+  renderEvents();
+  if (eventSaveStatus) eventSaveStatus.textContent = `${event.title} foi publicado no calendário.`;
+}
+
+function populateSupplyEvents() {
+  if (!supplyEvent) return;
+
+  const currentValue = supplyEvent.value;
+  supplyEvent.textContent = "";
+  orderedEvents().forEach((event) => {
+    const option = document.createElement("option");
+    option.value = event.id;
+    option.textContent = `${formatDate(event.date)} - ${event.title}`;
+    supplyEvent.append(option);
+  });
+
+  if (events.some((event) => event.id === currentValue)) supplyEvent.value = currentValue;
+}
+
+function renderSupplyLists() {
+  if (!supplyList) return;
+
+  supplyList.textContent = "";
+  supplyLists.forEach((list) => {
+    const wrapper = document.createElement("article");
+    wrapper.className = "supply-group";
+
+    const event = events.find((item) => item.id === list.eventId);
+    const header = document.createElement("div");
+    header.className = "panel-heading";
+    const title = document.createElement("h2");
+    title.textContent = list.title;
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = event ? formatDate(event.date) : "Sem evento";
+    header.append(title, tag);
+
+    const items = document.createElement("div");
+    items.className = "item-list";
+    list.items.forEach((item) => {
+      const row = document.createElement("article");
+      row.className = "supply-item";
+
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = item.delivered;
+      checkbox.disabled = true;
+      const name = document.createElement("span");
+      name.textContent = item.name;
+      label.append(checkbox, name);
+
+      const owner = document.createElement("strong");
+      owner.textContent = item.assignedTo || "Disponível";
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = item.assignedTo ? "secondary-button" : "primary-button";
+      button.textContent = item.assignedTo === "Larissa"
+        ? item.delivered ? "Entregue" : "Marcar entrega"
+        : item.assignedTo ? "Assumido" : "Assumir";
+      button.disabled = item.assignedTo && item.assignedTo !== "Larissa";
+      button.addEventListener("click", () => updateSupplyItem(list.id, item.id));
+
+      row.append(label, owner, button);
+      items.append(row);
+    });
+
+    wrapper.append(header, items);
+    supplyList.append(wrapper);
+  });
+
+  const allItems = supplyLists.flatMap((list) => list.items);
+  if (supplyListCount) supplyListCount.textContent = supplyLists.length;
+  if (supplyPendingCount) supplyPendingCount.textContent = allItems.filter((item) => !item.assignedTo || !item.delivered).length;
+  if (mySupplyCount) mySupplyCount.textContent = allItems.filter((item) => item.assignedTo === "Larissa").length;
+}
+
+function updateSupplyItem(listId, itemId) {
+  const list = supplyLists.find((entry) => entry.id === listId);
+  const item = list?.items.find((entry) => entry.id === itemId);
+  if (!item) return;
+
+  if (!item.assignedTo) {
+    item.assignedTo = "Larissa";
+    item.delivered = false;
+  } else if (item.assignedTo === "Larissa") {
+    item.delivered = !item.delivered;
+  }
+
+  persistSupplyLists();
+  renderSupplyLists();
+}
+
+function addSupplyList() {
+  const names = supplyFields.items.value
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const list = {
+    id: `lista-${Date.now()}`,
+    title: supplyFields.title.value.trim() || "Nova lista",
+    eventId: supplyFields.event.value || events[0]?.id || "",
+    items: names.map((name, index) => ({
+      id: `item-${Date.now()}-${index}`,
+      name,
+      assignedTo: "",
+      delivered: false,
+    })),
+  };
+
+  supplyLists.unshift(list);
+  persistSupplyLists();
+  renderSupplyLists();
+  if (supplySaveStatus) supplySaveStatus.textContent = `${list.title} foi publicada para a corrente.`;
+}
+
+function renderStudies() {
+  if (!studyList) return;
+
+  studyList.textContent = "";
+  studies.forEach((study) => {
+    const item = document.createElement("article");
+    item.className = "study-item";
+
+    const header = document.createElement("div");
+    header.className = "study-header";
+    const title = document.createElement("h3");
+    title.textContent = study.title;
+    const tag = document.createElement("span");
+    tag.className = study.type === "Entrega" ? "tag pending" : "tag confirmed";
+    tag.textContent = study.type;
+    header.append(title, tag);
+
+    const description = document.createElement("p");
+    description.textContent = study.description;
+
+    const meta = document.createElement("div");
+    meta.className = "study-meta";
+    meta.append(`Prazo: ${formatDate(study.dueDate)}`);
+    if (study.fileName) {
+      const file = document.createElement("span");
+      file.textContent = `Anexo: ${study.fileName}`;
+      meta.append(file);
+    }
+
+    const responseField = document.createElement("textarea");
+    responseField.className = "study-response";
+    responseField.value = study.response || "";
+    responseField.placeholder = "Escreva sua resposta, resumo ou observação de entrega.";
+    responseField.setAttribute("aria-label", `Resposta para ${study.title}`);
+
+    const actions = document.createElement("div");
+    actions.className = "study-actions";
+    const answer = document.createElement("button");
+    answer.className = "secondary-button";
+    answer.type = "button";
+    answer.textContent = "Enviar resposta";
+    answer.addEventListener("click", () => {
+      study.response = responseField.value.trim();
+      persistStudies();
+      renderStudies();
+    });
+
+    const done = document.createElement("button");
+    done.className = study.completed ? "secondary-button" : "primary-button";
+    done.type = "button";
+    done.textContent = study.completed ? "Entregue" : "Marcar entrega";
+    done.addEventListener("click", () => {
+      study.completed = !study.completed;
+      persistStudies();
+      renderStudies();
+    });
+    actions.append(answer, done);
+
+    item.append(header, description, meta, responseField, actions);
+    studyList.append(item);
+  });
+
+  if (studyCount) studyCount.textContent = studies.length;
+  if (studyTaskCount) {
+    studyTaskCount.textContent = studies.filter((study) => study.type === "Entrega" && !study.completed).length;
+  }
+}
+
+function addStudy() {
+  const fileName = studyFields.file.files?.[0]?.name || "";
+  const study = {
+    id: `estudo-${Date.now()}`,
+    title: studyFields.title.value.trim() || "Novo estudo",
+    type: studyFields.type.value,
+    dueDate: studyFields.date.value,
+    description: studyFields.description.value.trim(),
+    fileName,
+    completed: false,
+  };
+
+  studies.unshift(study);
+  persistStudies();
+  renderStudies();
+  if (studyFields.file) studyFields.file.value = "";
+  if (studySaveStatus) studySaveStatus.textContent = `${study.title} foi publicado para a corrente.`;
+}
+
+function feedbackDateLabel(value) {
+  return value ? formatDate(value.slice(0, 10)) : "Hoje";
+}
+
+function createFeedbackItem(feedback, adminView = false) {
+  const item = document.createElement("article");
+  item.className = "feedback-item positive";
+
+  const recipient = findProfile(feedback.toId);
+  const header = document.createElement("div");
+  header.className = "feedback-header";
+
+  const title = document.createElement("h3");
+  title.textContent = adminView ? `${recipient?.name || "Perfil"} recebeu` : "Feedback positivo";
+
+  const tag = document.createElement("span");
+  tag.className = "tag confirmed";
+  tag.textContent = "Anônimo";
+  header.append(title, tag);
+
+  const message = document.createElement("p");
+  message.textContent = feedback.message;
+
+  const meta = document.createElement("small");
+  meta.textContent = adminView
+    ? `Anônimo - ${feedbackDateLabel(feedback.createdAt)}`
+    : `Recebido anonimamente - ${feedbackDateLabel(feedback.createdAt)}`;
+
+  item.append(header, message, meta);
+  return item;
+}
+
+function renderFeedbackRecipients() {
+  if (!feedbackFields.recipient) return;
+
+  const currentValue = feedbackFields.recipient.value;
+  feedbackFields.recipient.textContent = "";
+
+  orderedProfiles()
+    .filter((profile) => !profile.leader)
+    .forEach((profile) => {
+      const option = document.createElement("option");
+      option.value = profile.id;
+      option.textContent = profile.name;
+      feedbackFields.recipient.append(option);
+    });
+
+  if ([...feedbackFields.recipient.options].some((option) => option.value === currentValue)) {
+    feedbackFields.recipient.value = currentValue;
+  }
+}
+
+function renderFeedback() {
+  renderFeedbackRecipients();
+
+  const currentSelf = selfProfile();
+  const selfFeedbacks = feedbacks.filter((feedback) => feedback.toId === currentSelf?.id);
+  const selectedFeedbacks = feedbacks.filter((feedback) => feedback.toId === currentProfileId);
+
+  if (feedbackFields.myPositiveList) {
+    feedbackFields.myPositiveList.textContent = "";
+    if (!selfFeedbacks.length) {
+      const empty = document.createElement("p");
+      empty.className = "empty-state";
+      empty.textContent = "Ainda não há feedback positivo recebido.";
+      feedbackFields.myPositiveList.append(empty);
+    } else {
+      selfFeedbacks.forEach((feedback) => feedbackFields.myPositiveList.append(createFeedbackItem(feedback)));
+    }
+  }
+
+  if (feedbackFields.selectedProfileList) {
+    feedbackFields.selectedProfileList.textContent = "";
+    if (!selectedFeedbacks.length) {
+      const empty = document.createElement("p");
+      empty.className = "empty-state";
+      empty.textContent = "Ainda não há feedback positivo neste perfil.";
+      feedbackFields.selectedProfileList.append(empty);
+    } else {
+      selectedFeedbacks.forEach((feedback) => feedbackFields.selectedProfileList.append(createFeedbackItem(feedback)));
+    }
+  }
+
+  if (feedbackFields.adminList) {
+    feedbackFields.adminList.textContent = "";
+    if (!feedbacks.length) {
+      const empty = document.createElement("p");
+      empty.className = "empty-state";
+      empty.textContent = "Nenhum feedback positivo registrado.";
+      feedbackFields.adminList.append(empty);
+    } else {
+      feedbacks.forEach((feedback) => feedbackFields.adminList.append(createFeedbackItem(feedback, true)));
+    }
+  }
+
+  if (feedbackFields.myFeedbackCount) feedbackFields.myFeedbackCount.textContent = selfFeedbacks.length;
+}
+
+function sendFeedback() {
+  const toId = feedbackFields.recipient?.value;
+  const message = feedbackFields.message?.value.trim();
+  if (!toId || !message) {
+    if (feedbackFields.status) feedbackFields.status.textContent = "Escolha o médium e escreva o feedback.";
+    return;
+  }
+
+  feedbacks.unshift({
+    id: `feedback-${Date.now()}`,
+    toId,
+    message,
+    createdAt: new Date().toISOString().slice(0, 10),
+  });
+
+  persistFeedbacks();
+  feedbackFields.message.value = "";
+  if (feedbackFields.status) feedbackFields.status.textContent = "Feedback anônimo enviado.";
+  renderFeedback();
+}
+
+function renderForum() {
+  if (!forumList) return;
+
+  forumList.textContent = "";
+  forumTopics.forEach((topic) => {
+    const item = document.createElement("article");
+    item.className = "forum-topic";
+
+    const header = document.createElement("div");
+    header.className = "feedback-header";
+    const title = document.createElement("h3");
+    title.textContent = topic.title;
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = `${topic.replies?.length || 0} respostas`;
+    header.append(title, tag);
+
+    const message = document.createElement("p");
+    message.textContent = topic.message;
+
+    const meta = document.createElement("small");
+    meta.textContent = `${topic.author || "Anônimo"} - ${feedbackDateLabel(topic.createdAt)}`;
+
+    const replies = document.createElement("div");
+    replies.className = "forum-replies";
+    (topic.replies || []).forEach((reply) => {
+      const replyItem = document.createElement("article");
+      replyItem.className = "forum-reply";
+      const replyMessage = document.createElement("p");
+      replyMessage.textContent = reply.message;
+      const replyMeta = document.createElement("small");
+      replyMeta.textContent = `${reply.author || "Anônimo"} - ${feedbackDateLabel(reply.createdAt)}`;
+      replyItem.append(replyMessage, replyMeta);
+      replies.append(replyItem);
+    });
+
+    const replyField = document.createElement("textarea");
+    replyField.className = "forum-reply-field";
+    replyField.placeholder = "Responder esta dúvida...";
+    replyField.setAttribute("aria-label", `Responder ${topic.title}`);
+
+    const replyButton = document.createElement("button");
+    replyButton.className = "secondary-button";
+    replyButton.type = "button";
+    replyButton.textContent = "Responder";
+    replyButton.addEventListener("click", () => addForumReply(topic.id, replyField.value));
+
+    item.append(header, message, meta, replies, replyField, replyButton);
+    forumList.append(item);
+  });
+
+  if (forumCount) forumCount.textContent = forumTopics.length;
+  if (forumReplyCount) {
+    forumReplyCount.textContent = forumTopics.reduce((total, topic) => total + (topic.replies?.length || 0), 0);
+  }
+}
+
+function addForumTopic() {
+  const title = forumFields.title?.value.trim();
+  const message = forumFields.message?.value.trim();
+  if (!title || !message) {
+    if (forumStatus) forumStatus.textContent = "Escreva o título e a dúvida para publicar.";
+    return;
+  }
+
+  forumTopics.unshift({
+    id: `forum-${Date.now()}`,
+    title,
+    message,
+    author: "Anônimo",
+    createdAt: new Date().toISOString().slice(0, 10),
+    replies: [],
+  });
+
+  persistForumTopics();
+  forumFields.title.value = "";
+  forumFields.message.value = "";
+  if (forumStatus) forumStatus.textContent = "Dúvida publicada no fórum.";
+  renderForum();
+}
+
+function addForumReply(topicId, message) {
+  const topic = forumTopics.find((item) => item.id === topicId);
+  const text = message.trim();
+  if (!topic || !text) return;
+
+  topic.replies = topic.replies || [];
+  topic.replies.push({
+    id: `reply-${Date.now()}`,
+    message: text,
+    author: "Anônimo",
+    createdAt: new Date().toISOString().slice(0, 10),
+  });
+
+  persistForumTopics();
+  renderForum();
+}
+
+navButtons.forEach((button) => {
+  button.addEventListener("click", () => showScreen(button.dataset.screen));
+});
+
+document.querySelectorAll(".role-switch button").forEach((button) => {
+  button.addEventListener("click", () => {
+    const mode = button.textContent.trim() === "Admin" ? "admin" : "medium";
+    setMode(mode);
+  });
+});
+
+photoInput?.addEventListener("change", () => {
+  const file = photoInput.files?.[0];
+  const profile = findProfile(currentProfileId);
+  if (!file || !profile) return;
+
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    profile.photo = reader.result;
+    persistProfiles();
+    fillPhotoPreview(profile);
+    renderAllProfiles();
+    loadProfile(profile.id);
+    renderSelfProfile();
+  });
+  reader.readAsDataURL(file);
+});
+
+selfFields.photoInput?.addEventListener("change", () => {
+  const file = selfFields.photoInput.files?.[0];
+  const profile = selfProfile();
+  if (!file || !profile) return;
+
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    profile.photo = reader.result;
+    persistProfiles();
+    renderSelfProfile();
+    renderAllProfiles();
+    if (currentProfileId === profile.id) loadProfile(profile.id);
+  });
+  reader.readAsDataURL(file);
+});
+
+document.querySelector("#save-profile-button")?.addEventListener("click", saveCurrentProfile);
+document.querySelector("#new-profile-button")?.addEventListener("click", createNewProfile);
+document.querySelector("#prev-profile-button")?.addEventListener("click", () => moveProfile(-1));
+document.querySelector("#next-profile-button")?.addEventListener("click", () => moveProfile(1));
+document.querySelector("#save-self-profile-button")?.addEventListener("click", saveSelfProfile);
+document.querySelector("#add-study-button")?.addEventListener("click", addStudy);
+document.querySelector("#add-event-button")?.addEventListener("click", addEvent);
+document.querySelector("#add-supply-list-button")?.addEventListener("click", addSupplyList);
+document.querySelector("#send-feedback-button")?.addEventListener("click", sendFeedback);
+document.querySelector("#add-forum-topic-button")?.addEventListener("click", addForumTopic);
+calendarYear?.addEventListener("change", renderEvents);
+document.querySelectorAll("[data-presence]").forEach((button) => {
+  button.addEventListener("click", () => setEventPresence(button.dataset.presence));
+});
+
+renderAllProfiles();
+loadProfile(currentProfileId);
+renderSelfProfile();
+renderEvents();
+renderSupplyLists();
+renderStudies();
+renderFeedback();
+renderForum();
+setMode("admin");
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+  });
+}
