@@ -10,6 +10,7 @@ Antes de mexer no banco, abra `Administração` no app e use `Exportar backup`. 
 2. Crie um projeto chamado `tecpb-app`
 3. Abra `SQL Editor`
 4. Cole e execute o conteudo de `supabase-schema.sql`
+5. Depois cole e execute o conteudo de `supabase-storage.sql`
 
 ## 2. Pegar as chaves publicas do app
 
@@ -70,7 +71,8 @@ Depois que `supabase-config.js` tiver URL e anon key e o usuario entrar com e-ma
 - estudos sao inseridos pela administracao e respondidos pelos mediuns
 - feedback positivo aparece anonimo para quem recebeu
 - forum fica compartilhado entre todos
-- perfis e fotos passam a carregar do banco
+- perfis passam a carregar do banco
+- fotos de perfil passam a ser salvas no Storage do Supabase
 
 ## 6. Primeira carga dos dados do prototipo
 

@@ -12,6 +12,7 @@ Este pacote e um app instalavel no formato PWA. Para publicar, envie todos estes
 - assets/icon-192.png
 - assets/icon-512.png
 - supabase-schema.sql
+- supabase-storage.sql
 - supabase-users-template.sql
 - PROXIMOS_PASSOS_SUPABASE.md
 
@@ -43,4 +44,4 @@ Observacao importante:
 Este prototipo salva informacoes no navegador usando localStorage. Isso quer dizer que, nesta versao, os dados nao ficam sincronizados entre celulares diferentes. Para virar app real com login, perfis compartilhados, anexos e dados iguais para todos, o proximo passo e conectar um backend/banco de dados.
 
 Proximo passo tecnico:
-Use o arquivo supabase-schema.sql para criar o banco no Supabase. Depois crie os usuarios, use supabase-users-template.sql para vincular cada usuario a um perfil na tabela app_users e preencha supabase-config.js com a Project URL e a anon public key do projeto. O roteiro completo esta em PROXIMOS_PASSOS_SUPABASE.md.
+Use o arquivo supabase-schema.sql para criar o banco no Supabase e supabase-storage.sql para liberar fotos de perfil. Depois crie os usuarios, use supabase-users-template.sql para vincular cada usuario a um perfil na tabela app_users e preencha supabase-config.js com a Project URL e a anon public key do projeto. O roteiro completo esta em PROXIMOS_PASSOS_SUPABASE.md.

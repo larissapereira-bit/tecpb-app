@@ -763,6 +763,58 @@ async function upsertRows(client, table, rows) {
   if (error) throw error;
 }
 
+function safeFileName(name) {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9.-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase() || "foto";
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => resolve(reader.result));
+    reader.addEventListener("error", () => reject(reader.error));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadProfilePhoto(file, profileId) {
+  const client = await ensureAuthenticatedClient();
+  if (!client) return readFileAsDataUrl(file);
+
+  const extension = safeFileName(file.name).split(".").pop() || "jpg";
+  const path = `${profileId}/${Date.now()}.${extension}`;
+  const { error } = await client.storage.from("profile-photos").upload(path, file, {
+    cacheControl: "3600",
+    upsert: true,
+  });
+  if (error) throw error;
+
+  const { data } = client.storage.from("profile-photos").getPublicUrl(path);
+  return data.publicUrl;
+}
+
+async function updateProfilePhoto(file, profile, afterSave) {
+  if (!file || !profile) return;
+
+  try {
+    if (syncStatus && hasSupabaseConfig()) syncStatus.textContent = "Enviando foto...";
+    profile.photo = await uploadProfilePhoto(file, profile.id);
+    persistProfiles();
+    afterSave();
+    if (syncStatus && hasSupabaseConfig()) syncStatus.textContent = "Foto sincronizada";
+  } catch (error) {
+    console.error(error);
+    profile.photo = await readFileAsDataUrl(file);
+    persistProfiles();
+    afterSave();
+    if (syncStatus) syncStatus.textContent = "Foto salva localmente";
+  }
+}
+
 function profileToRemote(profile) {
   return {
     id: profile.id,
@@ -2109,16 +2161,12 @@ photoInput?.addEventListener("change", () => {
   const profile = findProfile(currentProfileId);
   if (!file || !profile) return;
 
-  const reader = new FileReader();
-  reader.addEventListener("load", () => {
-    profile.photo = reader.result;
-    persistProfiles();
+  updateProfilePhoto(file, profile, () => {
     fillPhotoPreview(profile);
     renderAllProfiles();
     loadProfile(profile.id);
     renderSelfProfile();
   });
-  reader.readAsDataURL(file);
 });
 
 selfFields.photoInput?.addEventListener("change", () => {
@@ -2126,15 +2174,11 @@ selfFields.photoInput?.addEventListener("change", () => {
   const profile = selfProfile();
   if (!file || !profile) return;
 
-  const reader = new FileReader();
-  reader.addEventListener("load", () => {
-    profile.photo = reader.result;
-    persistProfiles();
+  updateProfilePhoto(file, profile, () => {
     renderSelfProfile();
     renderAllProfiles();
     if (currentProfileId === profile.id) loadProfile(profile.id);
   });
-  reader.readAsDataURL(file);
 });
 
 document.querySelector("#save-profile-button")?.addEventListener("click", saveCurrentProfile);
