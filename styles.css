@@ -2112,3 +2112,215 @@ h2 {
     height: 4px;
   }
 }
+
+/* App-wide polish layer for the authenticated experience. */
+.content {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(250, 248, 242, 0.72), rgba(246, 241, 232, 0.38)),
+    radial-gradient(circle at 74% 0%, rgba(201, 166, 70, 0.1), transparent 28rem);
+}
+
+.content::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto 292px;
+  height: 210px;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(18, 61, 42, 0.06), rgba(201, 166, 70, 0.08));
+  border-bottom: 1px solid rgba(18, 61, 42, 0.06);
+}
+
+.content > * {
+  position: relative;
+  z-index: 1;
+}
+
+.topbar {
+  border: 1px solid rgba(18, 61, 42, 0.1);
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(255, 253, 247, 0.94), rgba(231, 242, 234, 0.74)),
+    var(--surface);
+  box-shadow: var(--soft-shadow);
+  padding: 24px;
+}
+
+.topbar h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 0.98;
+}
+
+.brand small {
+  display: block;
+  color: rgba(255, 253, 247, 0.7);
+  font-size: 0.8rem;
+  font-weight: 750;
+  margin-top: 2px;
+}
+
+.nav-item {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-item::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: rgba(255, 253, 247, 0.34);
+  box-shadow: 0 0 0 4px rgba(255, 253, 247, 0.04);
+}
+
+.nav-item.active::before,
+.nav-item:hover::before {
+  background: var(--gold);
+  box-shadow: 0 0 0 4px rgba(201, 166, 70, 0.16);
+}
+
+.screen.active {
+  animation: screenFade 180ms ease both;
+}
+
+@keyframes screenFade {
+  from {
+    opacity: 0.76;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.screen#inicio .summary-grid .metric:first-child {
+  background:
+    linear-gradient(135deg, rgba(18, 61, 42, 0.95), rgba(31, 107, 69, 0.88)),
+    var(--green-dark);
+  color: #fffdf7;
+}
+
+.screen#inicio .summary-grid .metric:first-child span,
+.screen#inicio .summary-grid .metric:first-child small,
+.screen#inicio .summary-grid .metric:first-child strong {
+  color: #fffdf7;
+}
+
+.screen#inicio .summary-grid .metric:first-child::before {
+  background: linear-gradient(90deg, var(--gold), rgba(255, 253, 247, 0.8));
+}
+
+.panel-heading h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-heading h2::before {
+  content: "";
+  width: 9px;
+  height: 28px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: linear-gradient(var(--green), var(--gold));
+}
+
+.panel.accent {
+  box-shadow: 0 24px 56px rgba(201, 166, 70, 0.12);
+}
+
+.calendar-layout > .panel:first-child,
+.supply-layout > .panel:first-child,
+.two-column > .panel:first-child,
+.profile-layout > .panel:first-child {
+  background:
+    linear-gradient(180deg, rgba(255, 253, 247, 0.98), rgba(247, 251, 247, 0.92)),
+    var(--surface);
+}
+
+.event-detail {
+  border-color: rgba(201, 166, 70, 0.24);
+  box-shadow: 0 24px 58px rgba(17, 42, 28, 0.1);
+}
+
+.event-detail .presence-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.event-detail .presence-actions button {
+  min-width: 0;
+  white-space: normal;
+}
+
+.profile-form,
+.setup-list,
+.permission-list,
+.study-list,
+.feedback-list,
+.forum-list,
+.supply-list {
+  gap: 14px;
+}
+
+.field span,
+.compact-field span {
+  color: #53645a;
+}
+
+.field input:hover,
+.field select:hover,
+.field textarea:hover,
+.compact-field select:hover,
+.login-form input:hover,
+.auth-panel input:hover {
+  border-color: rgba(31, 107, 69, 0.26);
+  background: #fffdf7;
+}
+
+.empty-state {
+  border-style: solid;
+  background:
+    linear-gradient(135deg, rgba(231, 242, 234, 0.72), rgba(250, 248, 242, 0.9)),
+    var(--surface);
+}
+
+.admin-actions {
+  align-items: center;
+}
+
+.admin-actions .primary-button,
+.admin-actions .secondary-button {
+  min-width: 138px;
+}
+
+@media (max-width: 1080px) {
+  .content::before {
+    left: 250px;
+  }
+}
+
+@media (max-width: 860px) {
+  .content::before {
+    inset: 0;
+    height: 170px;
+  }
+
+  .topbar {
+    padding: 20px;
+  }
+
+  .nav-item {
+    justify-content: center;
+  }
+
+  .event-detail .presence-actions {
+    grid-template-columns: 1fr;
+  }
+}
