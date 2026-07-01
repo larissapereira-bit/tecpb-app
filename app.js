@@ -1220,7 +1220,7 @@ async function refreshAuthState() {
   if (authPassword) authPassword.hidden = isLoggedIn;
 
   if (!isLoggedIn) {
-    setAuthMessage("Entre para sincronizar");
+    setAuthMessage("Entre com o e-mail convidado");
     if (syncStatus) syncStatus.textContent = "Supabase configurado: aguardando login";
     return;
   }
@@ -1732,6 +1732,11 @@ function populateSupplyEvents() {
 
   const currentValue = supplyEvent.value;
   supplyEvent.textContent = "";
+  const generalOption = document.createElement("option");
+  generalOption.value = "";
+  generalOption.textContent = "Sem evento - lista geral/mensal";
+  supplyEvent.append(generalOption);
+
   orderedEvents().forEach((event) => {
     const option = document.createElement("option");
     option.value = event.id;
@@ -1739,7 +1744,11 @@ function populateSupplyEvents() {
     supplyEvent.append(option);
   });
 
-  if (events.some((event) => event.id === currentValue)) supplyEvent.value = currentValue;
+  if (events.some((event) => event.id === currentValue)) {
+    supplyEvent.value = currentValue;
+  } else {
+    supplyEvent.value = "";
+  }
 }
 
 function renderSupplyLists() {
@@ -1757,7 +1766,7 @@ function renderSupplyLists() {
     title.textContent = list.title;
     const tag = document.createElement("span");
     tag.className = "tag";
-    tag.textContent = event ? formatDate(event.date) : "Sem evento";
+    tag.textContent = event ? formatDate(event.date) : "Lista geral";
     header.append(title, tag);
 
     const items = document.createElement("div");
@@ -1826,7 +1835,7 @@ function addSupplyList() {
   const list = {
     id: `lista-${Date.now()}`,
     title: supplyFields.title.value.trim() || "Nova lista",
-    eventId: supplyFields.event.value || events[0]?.id || "",
+    eventId: supplyFields.event.value || "",
     items: names.map((name, index) => ({
       id: `item-${Date.now()}-${index}`,
       name,
@@ -2197,7 +2206,7 @@ authLoginButton?.addEventListener("click", async () => {
   const email = authEmail?.value.trim();
   const password = authPassword?.value || "";
   if (!email || !password) {
-    setAuthMessage("Informe e-mail e senha");
+    setAuthMessage("Informe o e-mail convidado e a senha");
     return;
   }
 
@@ -2206,7 +2215,7 @@ authLoginButton?.addEventListener("click", async () => {
   setAuthMessage("Entrando...");
   const { error } = await client.auth.signInWithPassword({ email, password });
   if (error) {
-    setAuthMessage("Login não autorizado");
+    setAuthMessage("Convite/login não autorizado");
     return;
   }
   if (authPassword) authPassword.value = "";

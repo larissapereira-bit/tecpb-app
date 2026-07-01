@@ -27,6 +27,15 @@ Essas duas informacoes vao em `supabase-config.js`. A chave `anon public` pode f
 
 Depois do banco criado, cadastre os usuarios em `Authentication`.
 
+O fluxo recomendado e por convite:
+
+1. No Supabase, va em `Authentication` > `Users`.
+2. Use `Invite user` para enviar o convite por e-mail.
+3. A pessoa recebe o link, cria/define a senha e depois entra no app.
+4. So depois disso o usuario deve ser vinculado ao perfil em `app_users`.
+
+O link publico do app pode ser enviado para todo mundo, mas os dados online ficam protegidos pelo login e pelas politicas do Supabase. Na pratica, so quem tiver usuario criado/convidado e vinculado em `app_users` consegue acessar o perfil correto.
+
 Administradores previstos:
 
 - Thiago
@@ -87,6 +96,13 @@ Ao entrar como administrador, use o botao `Enviar dados locais`. Ele envia para 
 
 Use esse botao uma vez depois que o banco estiver criado. Depois disso, as novas alteracoes feitas no app ja tentam sincronizar automaticamente.
 
-## 7. Publicar de novo
+## 7. Listas de itens
+
+As listas podem ou nao estar ligadas a um evento.
+
+- Para lista mensal, doacao geral ou necessidades da casa, escolha `Sem evento - lista geral/mensal`.
+- Para lista de uma gira, estudo ou entrega especifica, escolha o evento correspondente.
+
+## 8. Publicar de novo
 
 Depois da conexao pronta, gerar novo pacote e publicar no GitHub Pages.
