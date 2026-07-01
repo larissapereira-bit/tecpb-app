@@ -12,9 +12,32 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon-192.png" />
     <link rel="apple-touch-icon" href="assets/icon-192.png" />
-    <link rel="stylesheet" href="styles.css?v=20260701-0745" />
+    <link rel="stylesheet" href="styles.css?v=20260701-0830" />
   </head>
   <body>
+    <section class="login-screen" id="login-screen" hidden>
+      <div class="login-card">
+        <img class="login-logo" src="assets/tecpb-symbol.png" alt="Símbolo do TECPB" />
+        <p class="eyebrow">TECPB</p>
+        <h1>Acesso da corrente</h1>
+        <p>Entre com o e-mail convidado pela administração.</p>
+
+        <div class="login-form" id="login-form">
+          <input id="login-email" type="email" placeholder="E-mail" autocomplete="email" />
+          <input id="login-password" type="password" placeholder="Senha" autocomplete="current-password" />
+          <button class="primary-button" id="login-button" type="button">Entrar</button>
+        </div>
+
+        <div class="login-form" id="password-setup-form" hidden>
+          <input id="new-password" type="password" placeholder="Crie sua senha" autocomplete="new-password" />
+          <input id="confirm-password" type="password" placeholder="Confirme sua senha" autocomplete="new-password" />
+          <button class="primary-button" id="save-password-button" type="button">Salvar senha e entrar</button>
+        </div>
+
+        <p class="save-status" id="login-status" aria-live="polite">Aguardando login.</p>
+      </div>
+    </section>
+
     <div class="app-shell">
       <aside class="sidebar" aria-label="Navegação principal">
         <div class="brand">
@@ -914,7 +937,7 @@ Pacote de arroz</textarea>
       </main>
     </div>
 
-    <script src="supabase-config.js?v=20260701-0745"></script>
-    <script src="app.js?v=20260701-0745"></script>
+    <script src="supabase-config.js?v=20260701-0830"></script>
+    <script src="app.js?v=20260701-0830"></script>
   </body>
 </html>

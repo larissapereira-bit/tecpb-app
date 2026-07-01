@@ -412,6 +412,16 @@ const forumList = document.querySelector("#forum-list");
 const forumCount = document.querySelector("#forum-count");
 const forumReplyCount = document.querySelector("#forum-reply-count");
 const forumStatus = document.querySelector("#forum-save-status");
+const loginScreen = document.querySelector("#login-screen");
+const loginForm = document.querySelector("#login-form");
+const loginEmail = document.querySelector("#login-email");
+const loginPassword = document.querySelector("#login-password");
+const loginButton = document.querySelector("#login-button");
+const loginStatus = document.querySelector("#login-status");
+const passwordSetupForm = document.querySelector("#password-setup-form");
+const newPassword = document.querySelector("#new-password");
+const confirmPassword = document.querySelector("#confirm-password");
+const savePasswordButton = document.querySelector("#save-password-button");
 const activeProfileSelect = document.querySelector("#active-profile-select");
 const authPanel = document.querySelector("#auth-panel");
 const authEmail = document.querySelector("#auth-email");
@@ -670,6 +680,7 @@ function renderSyncStatus() {
 
   const config = window.TECPB_SUPABASE || {};
   const hasRemoteConfig = Boolean(config.url && config.anonKey);
+  document.body.classList.toggle("supabase-mode", hasRemoteConfig);
 
   syncStatus.textContent = hasRemoteConfig
     ? "Supabase configurado: aguardando login"
@@ -704,6 +715,7 @@ function hasSupabaseConfig() {
 let supabaseClientPromise = null;
 let remoteSession = null;
 let remoteSaveChain = Promise.resolve();
+let passwordSetupRequired = ["invite", "recovery"].includes(new URLSearchParams(window.location.hash.slice(1)).get("type"));
 
 async function getSupabaseClient() {
   if (!hasSupabaseConfig()) return null;
@@ -716,6 +728,32 @@ async function getSupabaseClient() {
 
 function setAuthMessage(message) {
   if (authStatus) authStatus.textContent = message;
+  if (loginStatus) loginStatus.textContent = message;
+}
+
+function setLoginScreenState(state) {
+  if (!loginScreen) return;
+
+  const needsLoginScreen = hasSupabaseConfig() && (state !== "app");
+  document.body.classList.toggle("auth-required", needsLoginScreen);
+  document.body.classList.toggle("supabase-mode", hasSupabaseConfig());
+  loginScreen.hidden = !needsLoginScreen;
+
+  if (loginForm) loginForm.hidden = state === "password";
+  if (passwordSetupForm) passwordSetupForm.hidden = state !== "password";
+
+  if (state === "password") {
+    setAuthMessage("Convite aceito. Crie sua senha para entrar.");
+  } else if (state === "login") {
+    setAuthMessage("Entre com o e-mail convidado pela administração.");
+  }
+}
+
+function showUnlinkedAccount() {
+  setLoginScreenState("login");
+  if (loginForm) loginForm.hidden = true;
+  if (passwordSetupForm) passwordSetupForm.hidden = true;
+  setAuthMessage("Conta criada. Agora a administração precisa vincular seu usuário ao perfil.");
 }
 
 function profileIdFromValue(value) {
@@ -1061,6 +1099,11 @@ function importLocalBackup(file) {
 
 async function loadRemoteData(client) {
   const { data: userRow } = await client.from("app_users").select("*").eq("id", remoteSession.user.id).maybeSingle();
+  if (!userRow?.profile_id) {
+    showUnlinkedAccount();
+    return;
+  }
+
   if (userRow?.profile_id) {
     activeProfileId = userRow.profile_id;
     currentProfileId = userRow.profile_id;
@@ -1267,18 +1310,28 @@ async function refreshAuthState() {
   if (authPassword) authPassword.hidden = isLoggedIn;
 
   if (!isLoggedIn) {
+    setLoginScreenState("login");
     setAuthMessage("Entre com o e-mail convidado");
     if (syncStatus) syncStatus.textContent = "Supabase configurado: aguardando login";
     return;
   }
 
+  if (passwordSetupRequired) {
+    setLoginScreenState("password");
+    return;
+  }
+
+  setLoginScreenState("app");
   setAuthMessage(remoteSession.user.email || "Conta conectada");
   await loadRemoteData(client);
 }
 
 async function initSupabaseAuth() {
   renderSyncStatus();
-  if (!hasSupabaseConfig()) return;
+  if (!hasSupabaseConfig()) {
+    setLoginScreenState("app");
+    return;
+  }
 
   if (authPanel) authPanel.hidden = false;
   const client = await getSupabaseClient();
@@ -2214,6 +2267,58 @@ document.querySelectorAll(".role-switch button").forEach((button) => {
 
 activeProfileSelect?.addEventListener("change", () => setActiveProfile(activeProfileSelect.value));
 
+async function loginWithEmailPassword(email, password) {
+  if (!email || !password) {
+    setAuthMessage("Informe o e-mail convidado e a senha");
+    return;
+  }
+
+  const client = await getSupabaseClient();
+  if (!client) return;
+  setAuthMessage("Entrando...");
+  const { error } = await client.auth.signInWithPassword({ email, password });
+  if (error) {
+    setAuthMessage("Convite/login não autorizado");
+    return;
+  }
+  if (authPassword) authPassword.value = "";
+  if (loginPassword) loginPassword.value = "";
+  passwordSetupRequired = false;
+  await refreshAuthState();
+}
+
+async function saveInvitedPassword() {
+  const password = newPassword?.value || "";
+  const confirmation = confirmPassword?.value || "";
+  if (password.length < 6) {
+    setAuthMessage("A senha precisa ter pelo menos 6 caracteres.");
+    return;
+  }
+  if (password !== confirmation) {
+    setAuthMessage("As senhas não conferem.");
+    return;
+  }
+
+  const client = await ensureAuthenticatedClient();
+  if (!client) {
+    setAuthMessage("Convite expirado. Envie um novo convite.");
+    return;
+  }
+
+  setAuthMessage("Salvando senha...");
+  const { error } = await client.auth.updateUser({ password });
+  if (error) {
+    setAuthMessage("Não foi possível salvar a senha.");
+    return;
+  }
+
+  passwordSetupRequired = false;
+  if (newPassword) newPassword.value = "";
+  if (confirmPassword) confirmPassword.value = "";
+  window.history.replaceState({}, document.title, window.location.pathname);
+  await refreshAuthState();
+}
+
 photoInput?.addEventListener("change", () => {
   const file = photoInput.files?.[0];
   const profile = findProfile(currentProfileId);
@@ -2252,24 +2357,12 @@ document.querySelector("#add-forum-topic-button")?.addEventListener("click", add
 backupFields.exportButton?.addEventListener("click", exportLocalBackup);
 backupFields.importInput?.addEventListener("change", () => importLocalBackup(backupFields.importInput.files?.[0]));
 authLoginButton?.addEventListener("click", async () => {
-  const email = authEmail?.value.trim();
-  const password = authPassword?.value || "";
-  if (!email || !password) {
-    setAuthMessage("Informe o e-mail convidado e a senha");
-    return;
-  }
-
-  const client = await getSupabaseClient();
-  if (!client) return;
-  setAuthMessage("Entrando...");
-  const { error } = await client.auth.signInWithPassword({ email, password });
-  if (error) {
-    setAuthMessage("Convite/login não autorizado");
-    return;
-  }
-  if (authPassword) authPassword.value = "";
-  await refreshAuthState();
+  await loginWithEmailPassword(authEmail?.value.trim(), authPassword?.value || "");
 });
+loginButton?.addEventListener("click", async () => {
+  await loginWithEmailPassword(loginEmail?.value.trim(), loginPassword?.value || "");
+});
+savePasswordButton?.addEventListener("click", saveInvitedPassword);
 authLogoutButton?.addEventListener("click", async () => {
   const client = await getSupabaseClient();
   if (!client) return;
