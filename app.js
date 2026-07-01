@@ -323,6 +323,7 @@ const studiesStorageKey = "tecpbStudies";
 const feedbackStorageKey = "tecpbFeedbacks";
 const forumStorageKey = "tecpbForumTopics";
 const remoteUploadStorageKey = "tecpbLastRemoteUploadAt";
+const activeProfileStorageKey = "tecpbActiveProfile";
 const removedObligation = ["Mesa", "de", "iniciação"].join(" ");
 
 const hierarchyOverrides = {
@@ -411,6 +412,7 @@ const forumList = document.querySelector("#forum-list");
 const forumCount = document.querySelector("#forum-count");
 const forumReplyCount = document.querySelector("#forum-reply-count");
 const forumStatus = document.querySelector("#forum-save-status");
+const activeProfileSelect = document.querySelector("#active-profile-select");
 const authPanel = document.querySelector("#auth-panel");
 const authEmail = document.querySelector("#auth-email");
 const authPassword = document.querySelector("#auth-password");
@@ -497,7 +499,8 @@ const supplyFields = {
   items: document.querySelector("#supply-items"),
 };
 
-let currentProfileId = "larissa";
+let activeProfileId = localStorage.getItem(activeProfileStorageKey) || "larissa";
+let currentProfileId = activeProfileId;
 let currentMode = "admin";
 let selectedEventId = events[0]?.id || "";
 
@@ -729,7 +732,7 @@ function profileNameFromValue(value) {
 }
 
 function isCurrentProfileValue(value) {
-  return profileIdFromValue(value) === currentProfileId;
+  return profileIdFromValue(value) === activeProfileId;
 }
 
 async function ensureAuthenticatedClient() {
@@ -915,9 +918,9 @@ async function saveStudiesRemote(client) {
   const submissions = studies
     .filter((study) => study.response || study.completed)
     .map((study) => ({
-      id: `${study.id}-${currentProfileId}`,
+      id: `${study.id}-${activeProfileId}`,
       study_id: study.id,
-      profile_id: currentProfileId,
+      profile_id: activeProfileId,
       response: study.response || "",
       completed: Boolean(study.completed),
       updated_at: new Date().toISOString(),
@@ -1058,7 +1061,11 @@ function importLocalBackup(file) {
 
 async function loadRemoteData(client) {
   const { data: userRow } = await client.from("app_users").select("*").eq("id", remoteSession.user.id).maybeSingle();
-  if (userRow?.profile_id) currentProfileId = userRow.profile_id;
+  if (userRow?.profile_id) {
+    activeProfileId = userRow.profile_id;
+    currentProfileId = userRow.profile_id;
+    localStorage.setItem(activeProfileStorageKey, activeProfileId);
+  }
   if (userRow?.role) currentMode = userRow.role === "admin" ? "admin" : "medium";
 
   const [
@@ -1079,7 +1086,7 @@ async function loadRemoteData(client) {
     client.from("supply_lists").select("*").order("created_at", { ascending: false }),
     client.from("supply_items").select("*"),
     client.from("studies").select("*").order("created_at", { ascending: false }),
-    client.from("study_submissions").select("*").eq("profile_id", currentProfileId),
+    client.from("study_submissions").select("*").eq("profile_id", activeProfileId),
     client.from("positive_feedback").select("*").order("created_at", { ascending: false }),
     client.from("forum_topics").select("*").order("created_at", { ascending: false }),
     client.from("forum_replies").select("*").order("created_at", { ascending: true }),
@@ -1194,6 +1201,7 @@ async function loadRemoteData(client) {
 }
 
 function renderEverything() {
+  renderActiveProfileSelect();
   renderAllProfiles();
   loadProfile(currentProfileId);
   renderSelfProfile();
@@ -1204,6 +1212,44 @@ function renderEverything() {
   renderForum();
 }
 
+function renderActiveProfileSelect() {
+  if (!activeProfileSelect) return;
+
+  const currentValue = activeProfileId;
+  activeProfileSelect.textContent = "";
+  orderedProfiles().forEach((profile) => {
+    const option = document.createElement("option");
+    option.value = profile.id;
+    option.textContent = profile.name;
+    activeProfileSelect.append(option);
+  });
+
+  if (profiles.some((profile) => profile.id === currentValue)) {
+    activeProfileSelect.value = currentValue;
+  } else if (profiles[0]) {
+    activeProfileId = profiles[0].id;
+    activeProfileSelect.value = activeProfileId;
+  }
+
+  activeProfileSelect.disabled = Boolean(remoteSession);
+  activeProfileSelect.title = remoteSession
+    ? "Perfil definido pelo login"
+    : "Simula quem está usando o app neste protótipo";
+}
+
+function setActiveProfile(profileId) {
+  if (!findProfile(profileId)) return;
+
+  activeProfileId = profileId;
+  localStorage.setItem(activeProfileStorageKey, activeProfileId);
+  renderActiveProfileSelect();
+  renderSelfProfile();
+  renderEvents();
+  renderSupplyLists();
+  renderStudies();
+  renderFeedback();
+}
+
 async function refreshAuthState() {
   const client = await getSupabaseClient();
   if (!client) return;
@@ -1212,6 +1258,7 @@ async function refreshAuthState() {
   remoteSession = data.session;
   const isLoggedIn = Boolean(remoteSession);
   renderOnlineSetupStatus();
+  renderActiveProfileSelect();
 
   if (authLoginButton) authLoginButton.hidden = isLoggedIn;
   if (authUploadButton) authUploadButton.hidden = !isLoggedIn;
@@ -1295,7 +1342,7 @@ function findProfile(profileId) {
 }
 
 function selfProfile() {
-  return findProfile("larissa");
+  return findProfile(activeProfileId) || findProfile("larissa") || profiles[0];
 }
 
 function setSelectValue(select, value) {
@@ -1654,7 +1701,7 @@ function renderEvents() {
     meta.textContent = `${formatDate(event.date)}, ${event.time || "--:--"} - ${event.place || "Terreiro"}`;
     const tags = document.createElement("div");
     tags.className = "status-row";
-    const myResponse = event.responses?.larissa || "Aguardando resposta";
+    const myResponse = event.responses?.[activeProfileId] || "Aguardando resposta";
     const responseTag = document.createElement("span");
     responseTag.className = myResponse === "Vou" ? "tag confirmed" : myResponse === "Não vou" ? "tag pending" : "tag";
     responseTag.textContent = myResponse;
@@ -1692,7 +1739,7 @@ function selectEvent(eventId, rerender = true) {
   if (eventDetailDescription) {
     eventDetailDescription.textContent = `${formatDate(event.date)}, ${event.time || "--:--"} - ${event.place || "Terreiro"}. ${event.description}`;
   }
-  const response = event.responses?.[currentProfileId] || "Pendente";
+  const response = event.responses?.[activeProfileId] || "Pendente";
   if (eventPresenceStatus) eventPresenceStatus.textContent = `Sua resposta: ${response}`;
   if (myEventStatus) myEventStatus.textContent = response;
 
@@ -1703,7 +1750,7 @@ function setEventPresence(response) {
   const event = events.find((item) => item.id === selectedEventId);
   if (!event) return;
   event.responses = event.responses || {};
-  event.responses[currentProfileId] = response;
+  event.responses[activeProfileId] = response;
   persistEvents();
   selectEvent(event.id);
 }
@@ -1816,7 +1863,7 @@ function updateSupplyItem(listId, itemId) {
   if (!item) return;
 
   if (!item.assignedTo) {
-    item.assignedTo = currentProfileId;
+    item.assignedTo = activeProfileId;
     item.delivered = false;
   } else if (isCurrentProfileValue(item.assignedTo)) {
     item.delivered = !item.delivered;
@@ -2164,6 +2211,8 @@ document.querySelectorAll(".role-switch button").forEach((button) => {
     setMode(mode);
   });
 });
+
+activeProfileSelect?.addEventListener("change", () => setActiveProfile(activeProfileSelect.value));
 
 photoInput?.addEventListener("change", () => {
   const file = photoInput.files?.[0];

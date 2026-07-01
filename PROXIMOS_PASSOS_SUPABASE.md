@@ -103,6 +103,15 @@ As listas podem ou nao estar ligadas a um evento.
 - Para lista mensal, doacao geral ou necessidades da casa, escolha `Sem evento - lista geral/mensal`.
 - Para lista de uma gira, estudo ou entrega especifica, escolha o evento correspondente.
 
-## 8. Publicar de novo
+## 8. Testar perfis antes do login real
+
+Enquanto o Supabase nao estiver configurado, use o seletor `Perfil ativo` no topo do app para simular quem esta usando:
+
+- Thiago, Jaqueline e Larissa como administradores
+- demais perfis como mediuns
+
+Quando o Supabase estiver configurado e a pessoa entrar com e-mail/senha, o perfil passa a vir do login e o seletor fica apenas como referencia do prototipo.
+
+## 9. Publicar de novo
 
 Depois da conexao pronta, gerar novo pacote e publicar no GitHub Pages.

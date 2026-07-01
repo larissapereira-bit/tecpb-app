@@ -188,6 +188,31 @@ select {
   color: var(--green-deep);
 }
 
+.prototype-profile-switch {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--soft-shadow);
+  color: var(--green-deep);
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 0 10px;
+}
+
+.prototype-profile-switch select {
+  min-height: 28px;
+  min-width: 132px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fffdf8;
+  color: var(--ink);
+  font-weight: 750;
+}
+
 .auth-panel {
   display: grid;
   grid-template-columns: minmax(150px, 1fr) minmax(112px, 0.8fr) auto auto auto;
@@ -1115,6 +1140,11 @@ textarea {
   .auth-panel {
     width: 100%;
     grid-template-columns: 1fr;
+  }
+
+  .prototype-profile-switch {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .supply-item {
