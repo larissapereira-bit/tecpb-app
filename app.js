@@ -258,8 +258,8 @@ const defaultSupplyLists = [
     title: "Lista da gira de 05 jul",
     eventId: "evento-1",
     items: [
-      { id: "item-1", name: "Arruda fresca", assignedTo: "Larissa", delivered: false },
-      { id: "item-2", name: "Pacote de arroz", assignedTo: "Larissa", delivered: true },
+      { id: "item-1", name: "Arruda fresca", assignedTo: "larissa", delivered: false },
+      { id: "item-2", name: "Pacote de arroz", assignedTo: "larissa", delivered: true },
       { id: "item-3", name: "Velas brancas", assignedTo: "", delivered: false },
       { id: "item-4", name: "Material de limpeza", assignedTo: "", delivered: false },
     ],
@@ -410,6 +410,12 @@ const forumList = document.querySelector("#forum-list");
 const forumCount = document.querySelector("#forum-count");
 const forumReplyCount = document.querySelector("#forum-reply-count");
 const forumStatus = document.querySelector("#forum-save-status");
+const authPanel = document.querySelector("#auth-panel");
+const authEmail = document.querySelector("#auth-email");
+const authPassword = document.querySelector("#auth-password");
+const authLoginButton = document.querySelector("#auth-login-button");
+const authLogoutButton = document.querySelector("#auth-logout-button");
+const authStatus = document.querySelector("#auth-status");
 const forumFields = {
   title: document.querySelector("#forum-title"),
   message: document.querySelector("#forum-message"),
@@ -538,26 +544,32 @@ function loadSavedForumTopics() {
 
 function persistProfiles() {
   localStorage.setItem(storageKey, JSON.stringify(profiles));
+  queueRemoteSave("Perfis", saveProfilesRemote);
 }
 
 function persistEvents() {
   localStorage.setItem(eventsStorageKey, JSON.stringify(events));
+  queueRemoteSave("Calendário", saveEventsRemote);
 }
 
 function persistSupplyLists() {
   localStorage.setItem(supplyStorageKey, JSON.stringify(supplyLists));
+  queueRemoteSave("Listas", saveSupplyListsRemote);
 }
 
 function persistStudies() {
   localStorage.setItem(studiesStorageKey, JSON.stringify(studies));
+  queueRemoteSave("Estudos", saveStudiesRemote);
 }
 
 function persistFeedbacks() {
   localStorage.setItem(feedbackStorageKey, JSON.stringify(feedbacks));
+  queueRemoteSave("Feedbacks", saveFeedbacksRemote);
 }
 
 function persistForumTopics() {
   localStorage.setItem(forumStorageKey, JSON.stringify(forumTopics));
+  queueRemoteSave("Fórum", saveForumRemote);
 }
 
 function normalizeFeedbacks(items) {
@@ -644,9 +656,419 @@ function renderSyncStatus() {
   const hasRemoteConfig = Boolean(config.url && config.anonKey);
 
   syncStatus.textContent = hasRemoteConfig
-    ? "Supabase configurado: pronto para sincronizar"
+    ? "Supabase configurado: aguardando login"
     : "Modo local: dados neste aparelho";
   syncStatus.classList.toggle("online", hasRemoteConfig);
+}
+
+function supabaseConfig() {
+  return window.TECPB_SUPABASE || {};
+}
+
+function hasSupabaseConfig() {
+  const config = supabaseConfig();
+  return Boolean(config.url && config.anonKey);
+}
+
+let supabaseClientPromise = null;
+let remoteSession = null;
+let remoteSaveChain = Promise.resolve();
+
+async function getSupabaseClient() {
+  if (!hasSupabaseConfig()) return null;
+  if (!supabaseClientPromise) {
+    supabaseClientPromise = import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm")
+      .then(({ createClient }) => createClient(supabaseConfig().url, supabaseConfig().anonKey));
+  }
+  return supabaseClientPromise;
+}
+
+function setAuthMessage(message) {
+  if (authStatus) authStatus.textContent = message;
+}
+
+function profileIdFromValue(value) {
+  if (!value) return "";
+  const normalized = String(value).trim().toLowerCase();
+  const profile = profiles.find((item) => item.id === normalized || item.name.toLowerCase() === normalized);
+  return profile?.id || "";
+}
+
+function profileNameFromValue(value) {
+  if (!value) return "Disponível";
+  const profile = findProfile(value) || profiles.find((item) => item.name === value);
+  return profile?.name || value;
+}
+
+function isCurrentProfileValue(value) {
+  return profileIdFromValue(value) === currentProfileId;
+}
+
+async function ensureAuthenticatedClient() {
+  const client = await getSupabaseClient();
+  if (!client) return null;
+
+  const { data } = await client.auth.getSession();
+  remoteSession = data.session;
+  return remoteSession ? client : null;
+}
+
+function queueRemoteSave(label, saveFn) {
+  if (!hasSupabaseConfig()) return;
+
+  remoteSaveChain = remoteSaveChain
+    .then(async () => {
+      const client = await ensureAuthenticatedClient();
+      if (!client) return;
+      await saveFn(client);
+      if (syncStatus) syncStatus.textContent = `${label} sincronizado`;
+    })
+    .catch((error) => {
+      console.error(error);
+      if (syncStatus) syncStatus.textContent = `Falha ao sincronizar ${label.toLowerCase()}`;
+    });
+}
+
+async function upsertRows(client, table, rows) {
+  if (!rows.length) return;
+  const { error } = await client.from(table).upsert(rows);
+  if (error) throw error;
+}
+
+function profileToRemote(profile) {
+  return {
+    id: profile.id,
+    rank: profile.rank || 99,
+    leader: profile.leader || "",
+    marker: profile.marker || "✦",
+    initials: profile.initials || "",
+    name: profile.name,
+    spiritual_role: profile.role || "Médium",
+    permission_label: profile.permission || "Médium",
+    obligation: profile.obligation || "",
+    next_obligation: profile.next || "",
+    responsibility: profile.responsibility || "",
+    notes: profile.notes || "",
+    about: profile.about || "",
+    head_father: profile.headFather || "",
+    head_mother: profile.headMother || "",
+    photo_url: profile.photo || "",
+    updated_at: new Date().toISOString(),
+  };
+}
+
+function profileFromRemote(row) {
+  return normalizeProfile({
+    id: row.id,
+    rank: row.rank,
+    leader: row.leader,
+    marker: row.marker,
+    initials: row.initials,
+    name: row.name,
+    role: row.spiritual_role,
+    permission: row.permission_label,
+    obligation: row.obligation,
+    next: row.next_obligation,
+    responsibility: row.responsibility,
+    notes: row.notes,
+    about: row.about,
+    headFather: row.head_father,
+    headMother: row.head_mother,
+    photo: row.photo_url,
+  });
+}
+
+async function saveProfilesRemote(client) {
+  await upsertRows(client, "profiles", profiles.map(profileToRemote));
+}
+
+async function saveEventsRemote(client) {
+  await upsertRows(client, "events", events.map((event) => ({
+    id: event.id,
+    title: event.title,
+    type: event.type,
+    event_date: event.date,
+    event_time: event.time || null,
+    place: event.place || "Terreiro",
+    description: event.description || "",
+  })));
+
+  const responses = events.flatMap((event) => Object.entries(event.responses || {}).map(([profileId, response]) => ({
+    event_id: event.id,
+    profile_id: profileIdFromValue(profileId) || profileId,
+    response,
+    updated_at: new Date().toISOString(),
+  })));
+  await upsertRows(client, "event_responses", responses);
+}
+
+async function saveSupplyListsRemote(client) {
+  await upsertRows(client, "supply_lists", supplyLists.map((list) => ({
+    id: list.id,
+    title: list.title,
+    event_id: list.eventId || null,
+  })));
+
+  const items = supplyLists.flatMap((list) => list.items.map((item) => ({
+    id: item.id,
+    list_id: list.id,
+    name: item.name,
+    assigned_to: profileIdFromValue(item.assignedTo) || null,
+    delivered: Boolean(item.delivered),
+    delivery_photo_url: item.deliveryPhoto || "",
+    updated_at: new Date().toISOString(),
+  })));
+  await upsertRows(client, "supply_items", items);
+}
+
+async function saveStudiesRemote(client) {
+  await upsertRows(client, "studies", studies.map((study) => ({
+    id: study.id,
+    title: study.title,
+    type: study.type,
+    due_date: study.dueDate || null,
+    description: study.description || "",
+    file_name: study.fileName || "",
+    file_url: study.fileUrl || "",
+  })));
+
+  const submissions = studies
+    .filter((study) => study.response || study.completed)
+    .map((study) => ({
+      id: `${study.id}-${currentProfileId}`,
+      study_id: study.id,
+      profile_id: currentProfileId,
+      response: study.response || "",
+      completed: Boolean(study.completed),
+      updated_at: new Date().toISOString(),
+    }));
+  await upsertRows(client, "study_submissions", submissions);
+}
+
+async function saveFeedbacksRemote(client) {
+  await upsertRows(client, "positive_feedback", feedbacks.map((feedback) => ({
+    id: feedback.id,
+    to_profile_id: feedback.toId,
+    message: feedback.message,
+    created_at: feedback.createdAt,
+  })));
+}
+
+async function saveForumRemote(client) {
+  await upsertRows(client, "forum_topics", forumTopics.map((topic) => ({
+    id: topic.id,
+    title: topic.title,
+    message: topic.message,
+    author_profile_id: null,
+    anonymous: true,
+    created_at: topic.createdAt,
+  })));
+
+  const replies = forumTopics.flatMap((topic) => (topic.replies || []).map((reply) => ({
+    id: reply.id,
+    topic_id: topic.id,
+    message: reply.message,
+    author_profile_id: null,
+    anonymous: true,
+    created_at: reply.createdAt,
+  })));
+  await upsertRows(client, "forum_replies", replies);
+}
+
+function saveAllLocalOnly() {
+  localStorage.setItem(storageKey, JSON.stringify(profiles));
+  localStorage.setItem(eventsStorageKey, JSON.stringify(events));
+  localStorage.setItem(supplyStorageKey, JSON.stringify(supplyLists));
+  localStorage.setItem(studiesStorageKey, JSON.stringify(studies));
+  localStorage.setItem(feedbackStorageKey, JSON.stringify(feedbacks));
+  localStorage.setItem(forumStorageKey, JSON.stringify(forumTopics));
+}
+
+async function loadRemoteData(client) {
+  const { data: userRow } = await client.from("app_users").select("*").eq("id", remoteSession.user.id).maybeSingle();
+  if (userRow?.profile_id) currentProfileId = userRow.profile_id;
+  if (userRow?.role) currentMode = userRow.role === "admin" ? "admin" : "medium";
+
+  const [
+    remoteProfiles,
+    remoteEvents,
+    remoteResponses,
+    remoteLists,
+    remoteItems,
+    remoteStudies,
+    remoteSubmissions,
+    remoteFeedbacks,
+    remoteTopics,
+    remoteReplies,
+  ] = await Promise.all([
+    client.from("profiles").select("*").order("rank", { ascending: true }),
+    client.from("events").select("*").order("event_date", { ascending: true }),
+    client.from("event_responses").select("*"),
+    client.from("supply_lists").select("*").order("created_at", { ascending: false }),
+    client.from("supply_items").select("*"),
+    client.from("studies").select("*").order("created_at", { ascending: false }),
+    client.from("study_submissions").select("*").eq("profile_id", currentProfileId),
+    client.from("positive_feedback").select("*").order("created_at", { ascending: false }),
+    client.from("forum_topics").select("*").order("created_at", { ascending: false }),
+    client.from("forum_replies").select("*").order("created_at", { ascending: true }),
+  ]);
+
+  const errors = [
+    remoteProfiles.error,
+    remoteEvents.error,
+    remoteResponses.error,
+    remoteLists.error,
+    remoteItems.error,
+    remoteStudies.error,
+    remoteSubmissions.error,
+    remoteFeedbacks.error,
+    remoteTopics.error,
+    remoteReplies.error,
+  ].filter(Boolean);
+  if (errors.length) throw errors[0];
+
+  if (remoteProfiles.data?.length) profiles.splice(0, profiles.length, ...remoteProfiles.data.map(profileFromRemote));
+
+  const responsesByEvent = new Map();
+  (remoteResponses.data || []).forEach((response) => {
+    if (!responsesByEvent.has(response.event_id)) responsesByEvent.set(response.event_id, {});
+    responsesByEvent.get(response.event_id)[response.profile_id] = response.response;
+  });
+  if (remoteEvents.data?.length) {
+    events.splice(0, events.length, ...remoteEvents.data.map((event) => ({
+      id: event.id,
+      title: event.title,
+      type: event.type,
+      date: event.event_date,
+      time: event.event_time || "",
+      place: event.place || "Terreiro",
+      description: event.description || "",
+      responses: responsesByEvent.get(event.id) || {},
+    })));
+    selectedEventId = events[0]?.id || "";
+  }
+
+  if (remoteLists.data?.length) {
+    const itemsByList = new Map();
+    (remoteItems.data || []).forEach((item) => {
+      if (!itemsByList.has(item.list_id)) itemsByList.set(item.list_id, []);
+      itemsByList.get(item.list_id).push({
+        id: item.id,
+        name: item.name,
+        assignedTo: item.assigned_to || "",
+        delivered: item.delivered,
+        deliveryPhoto: item.delivery_photo_url || "",
+      });
+    });
+    supplyLists.splice(0, supplyLists.length, ...remoteLists.data.map((list) => ({
+      id: list.id,
+      title: list.title,
+      eventId: list.event_id || "",
+      items: itemsByList.get(list.id) || [],
+    })));
+  }
+
+  if (remoteStudies.data?.length) {
+    const submissionsByStudy = new Map((remoteSubmissions.data || []).map((submission) => [submission.study_id, submission]));
+    studies.splice(0, studies.length, ...remoteStudies.data.map((study) => {
+      const submission = submissionsByStudy.get(study.id);
+      return {
+        id: study.id,
+        title: study.title,
+        type: study.type,
+        dueDate: study.due_date || "",
+        description: study.description || "",
+        fileName: study.file_name || "",
+        fileUrl: study.file_url || "",
+        response: submission?.response || "",
+        completed: Boolean(submission?.completed),
+      };
+    }));
+  }
+
+  feedbacks.splice(0, feedbacks.length, ...normalizeFeedbacks((remoteFeedbacks.data || []).map((feedback) => ({
+    id: feedback.id,
+    toId: feedback.to_profile_id,
+    message: feedback.message,
+    createdAt: feedback.created_at,
+  }))));
+
+  if (remoteTopics.data?.length) {
+    const repliesByTopic = new Map();
+    (remoteReplies.data || []).forEach((reply) => {
+      if (!repliesByTopic.has(reply.topic_id)) repliesByTopic.set(reply.topic_id, []);
+      repliesByTopic.get(reply.topic_id).push({
+        id: reply.id,
+        message: reply.message,
+        author: "Anônimo",
+        createdAt: reply.created_at,
+      });
+    });
+    forumTopics.splice(0, forumTopics.length, ...remoteTopics.data.map((topic) => ({
+      id: topic.id,
+      title: topic.title,
+      message: topic.message,
+      author: "Anônimo",
+      createdAt: topic.created_at,
+      replies: repliesByTopic.get(topic.id) || [],
+    })));
+  }
+
+  saveAllLocalOnly();
+  renderEverything();
+  setMode(currentMode);
+  if (syncStatus) syncStatus.textContent = "Dados online carregados";
+}
+
+function renderEverything() {
+  renderAllProfiles();
+  loadProfile(currentProfileId);
+  renderSelfProfile();
+  renderEvents();
+  renderSupplyLists();
+  renderStudies();
+  renderFeedback();
+  renderForum();
+}
+
+async function refreshAuthState() {
+  const client = await getSupabaseClient();
+  if (!client) return;
+
+  const { data } = await client.auth.getSession();
+  remoteSession = data.session;
+  const isLoggedIn = Boolean(remoteSession);
+
+  if (authLoginButton) authLoginButton.hidden = isLoggedIn;
+  if (authLogoutButton) authLogoutButton.hidden = !isLoggedIn;
+  if (authEmail) authEmail.hidden = isLoggedIn;
+  if (authPassword) authPassword.hidden = isLoggedIn;
+
+  if (!isLoggedIn) {
+    setAuthMessage("Entre para sincronizar");
+    if (syncStatus) syncStatus.textContent = "Supabase configurado: aguardando login";
+    return;
+  }
+
+  setAuthMessage(remoteSession.user.email || "Conta conectada");
+  await loadRemoteData(client);
+}
+
+async function initSupabaseAuth() {
+  renderSyncStatus();
+  if (!hasSupabaseConfig()) return;
+
+  if (authPanel) authPanel.hidden = false;
+  const client = await getSupabaseClient();
+  if (!client) return;
+
+  client.auth.onAuthStateChange(() => {
+    refreshAuthState().catch((error) => {
+      console.error(error);
+      setAuthMessage("Não foi possível sincronizar");
+    });
+  });
+  await refreshAuthState();
 }
 
 function setMode(mode) {
@@ -1095,7 +1517,7 @@ function selectEvent(eventId, rerender = true) {
   if (eventDetailDescription) {
     eventDetailDescription.textContent = `${formatDate(event.date)}, ${event.time || "--:--"} - ${event.place || "Terreiro"}. ${event.description}`;
   }
-  const response = event.responses?.larissa || "Pendente";
+  const response = event.responses?.[currentProfileId] || "Pendente";
   if (eventPresenceStatus) eventPresenceStatus.textContent = `Sua resposta: ${response}`;
   if (myEventStatus) myEventStatus.textContent = response;
 
@@ -1106,7 +1528,7 @@ function setEventPresence(response) {
   const event = events.find((item) => item.id === selectedEventId);
   if (!event) return;
   event.responses = event.responses || {};
-  event.responses.larissa = response;
+  event.responses[currentProfileId] = response;
   persistEvents();
   selectEvent(event.id);
 }
@@ -1179,15 +1601,15 @@ function renderSupplyLists() {
       label.append(checkbox, name);
 
       const owner = document.createElement("strong");
-      owner.textContent = item.assignedTo || "Disponível";
+      owner.textContent = profileNameFromValue(item.assignedTo);
 
       const button = document.createElement("button");
       button.type = "button";
       button.className = item.assignedTo ? "secondary-button" : "primary-button";
-      button.textContent = item.assignedTo === "Larissa"
+      button.textContent = isCurrentProfileValue(item.assignedTo)
         ? item.delivered ? "Entregue" : "Marcar entrega"
         : item.assignedTo ? "Assumido" : "Assumir";
-      button.disabled = item.assignedTo && item.assignedTo !== "Larissa";
+      button.disabled = item.assignedTo && !isCurrentProfileValue(item.assignedTo);
       button.addEventListener("click", () => updateSupplyItem(list.id, item.id));
 
       row.append(label, owner, button);
@@ -1201,7 +1623,7 @@ function renderSupplyLists() {
   const allItems = supplyLists.flatMap((list) => list.items);
   if (supplyListCount) supplyListCount.textContent = supplyLists.length;
   if (supplyPendingCount) supplyPendingCount.textContent = allItems.filter((item) => !item.assignedTo || !item.delivered).length;
-  if (mySupplyCount) mySupplyCount.textContent = allItems.filter((item) => item.assignedTo === "Larissa").length;
+  if (mySupplyCount) mySupplyCount.textContent = allItems.filter((item) => isCurrentProfileValue(item.assignedTo)).length;
 }
 
 function updateSupplyItem(listId, itemId) {
@@ -1210,9 +1632,9 @@ function updateSupplyItem(listId, itemId) {
   if (!item) return;
 
   if (!item.assignedTo) {
-    item.assignedTo = "Larissa";
+    item.assignedTo = currentProfileId;
     item.delivered = false;
-  } else if (item.assignedTo === "Larissa") {
+  } else if (isCurrentProfileValue(item.assignedTo)) {
     item.delivered = !item.delivered;
   }
 
@@ -1602,21 +2024,43 @@ document.querySelector("#add-event-button")?.addEventListener("click", addEvent)
 document.querySelector("#add-supply-list-button")?.addEventListener("click", addSupplyList);
 document.querySelector("#send-feedback-button")?.addEventListener("click", sendFeedback);
 document.querySelector("#add-forum-topic-button")?.addEventListener("click", addForumTopic);
+authLoginButton?.addEventListener("click", async () => {
+  const email = authEmail?.value.trim();
+  const password = authPassword?.value || "";
+  if (!email || !password) {
+    setAuthMessage("Informe e-mail e senha");
+    return;
+  }
+
+  const client = await getSupabaseClient();
+  if (!client) return;
+  setAuthMessage("Entrando...");
+  const { error } = await client.auth.signInWithPassword({ email, password });
+  if (error) {
+    setAuthMessage("Login não autorizado");
+    return;
+  }
+  if (authPassword) authPassword.value = "";
+  await refreshAuthState();
+});
+authLogoutButton?.addEventListener("click", async () => {
+  const client = await getSupabaseClient();
+  if (!client) return;
+  await client.auth.signOut();
+  remoteSession = null;
+  await refreshAuthState();
+});
 calendarYear?.addEventListener("change", renderEvents);
 document.querySelectorAll("[data-presence]").forEach((button) => {
   button.addEventListener("click", () => setEventPresence(button.dataset.presence));
 });
 
-renderAllProfiles();
-renderSyncStatus();
-loadProfile(currentProfileId);
-renderSelfProfile();
-renderEvents();
-renderSupplyLists();
-renderStudies();
-renderFeedback();
-renderForum();
+renderEverything();
 setMode("admin");
+initSupabaseAuth().catch((error) => {
+  console.error(error);
+  setAuthMessage("Supabase indisponível");
+});
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {

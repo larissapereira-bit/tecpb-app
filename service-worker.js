@@ -1,4 +1,4 @@
-const CACHE_NAME = "tecpb-app-v2";
+const CACHE_NAME = "tecpb-app-v3";
 const APP_ASSETS = [
   "./",
   "./index.html",

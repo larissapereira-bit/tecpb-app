@@ -12,7 +12,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon-192.png" />
     <link rel="apple-touch-icon" href="assets/icon-192.png" />
-    <link rel="stylesheet" href="styles.css?v=20260701-0310" />
+    <link rel="stylesheet" href="styles.css?v=20260701-0410" />
   </head>
   <body>
     <div class="app-shell">
@@ -52,6 +52,13 @@
           </div>
           <div class="topbar-actions">
             <p class="sync-status" id="sync-status">Modo local: dados neste aparelho</p>
+            <div class="auth-panel" id="auth-panel" hidden>
+              <input id="auth-email" type="email" placeholder="E-mail" autocomplete="email" />
+              <input id="auth-password" type="password" placeholder="Senha" autocomplete="current-password" />
+              <button class="secondary-button" id="auth-login-button" type="button">Entrar</button>
+              <button class="ghost-button" id="auth-logout-button" type="button" hidden>Sair</button>
+              <small id="auth-status">Conecte sua conta</small>
+            </div>
             <div class="role-switch" aria-label="Modo de visualização">
               <button class="selected" type="button">Admin</button>
               <button type="button">Médium</button>
@@ -866,7 +873,7 @@ Pacote de arroz</textarea>
       </main>
     </div>
 
-    <script src="supabase-config.js?v=20260701-0310"></script>
-    <script src="app.js?v=20260701-0310"></script>
+    <script src="supabase-config.js?v=20260701-0410"></script>
+    <script src="app.js?v=20260701-0410"></script>
   </body>
 </html>

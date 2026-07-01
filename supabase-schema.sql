@@ -29,7 +29,7 @@ create table if not exists public.profiles (
 );
 
 create table if not exists public.events (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key,
   title text not null,
   type text not null default 'Gira',
   event_date date not null,
@@ -40,7 +40,7 @@ create table if not exists public.events (
 );
 
 create table if not exists public.event_responses (
-  event_id uuid not null references public.events(id) on delete cascade,
+  event_id text not null references public.events(id) on delete cascade,
   profile_id text not null references public.profiles(id) on delete cascade,
   response text not null check (response in ('Vou', 'Não vou', 'Talvez')),
   updated_at timestamptz not null default now(),
@@ -48,15 +48,15 @@ create table if not exists public.event_responses (
 );
 
 create table if not exists public.supply_lists (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key,
   title text not null,
-  event_id uuid references public.events(id) on delete set null,
+  event_id text references public.events(id) on delete set null,
   created_at timestamptz not null default now()
 );
 
 create table if not exists public.supply_items (
-  id uuid primary key default gen_random_uuid(),
-  list_id uuid not null references public.supply_lists(id) on delete cascade,
+  id text primary key,
+  list_id text not null references public.supply_lists(id) on delete cascade,
   name text not null,
   assigned_to text references public.profiles(id) on delete set null,
   delivered boolean not null default false,
@@ -65,7 +65,7 @@ create table if not exists public.supply_items (
 );
 
 create table if not exists public.studies (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key,
   title text not null,
   type text not null check (type in ('Estudo', 'Entrega')),
   due_date date,
@@ -76,8 +76,8 @@ create table if not exists public.studies (
 );
 
 create table if not exists public.study_submissions (
-  id uuid primary key default gen_random_uuid(),
-  study_id uuid not null references public.studies(id) on delete cascade,
+  id text primary key,
+  study_id text not null references public.studies(id) on delete cascade,
   profile_id text not null references public.profiles(id) on delete cascade,
   response text not null default '',
   completed boolean not null default false,
@@ -86,14 +86,14 @@ create table if not exists public.study_submissions (
 );
 
 create table if not exists public.positive_feedback (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key,
   to_profile_id text not null references public.profiles(id) on delete cascade,
   message text not null,
   created_at timestamptz not null default now()
 );
 
 create table if not exists public.forum_topics (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key,
   title text not null,
   message text not null,
   author_profile_id text references public.profiles(id) on delete set null,
@@ -102,8 +102,8 @@ create table if not exists public.forum_topics (
 );
 
 create table if not exists public.forum_replies (
-  id uuid primary key default gen_random_uuid(),
-  topic_id uuid not null references public.forum_topics(id) on delete cascade,
+  id text primary key,
+  topic_id text not null references public.forum_topics(id) on delete cascade,
   message text not null,
   author_profile_id text references public.profiles(id) on delete set null,
   anonymous boolean not null default true,

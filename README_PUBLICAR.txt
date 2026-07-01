@@ -42,4 +42,4 @@ Observacao importante:
 Este prototipo salva informacoes no navegador usando localStorage. Isso quer dizer que, nesta versao, os dados nao ficam sincronizados entre celulares diferentes. Para virar app real com login, perfis compartilhados, anexos e dados iguais para todos, o proximo passo e conectar um backend/banco de dados.
 
 Proximo passo tecnico:
-Use o arquivo supabase-schema.sql para criar o banco no Supabase. Depois preencha supabase-config.js com a Project URL e a anon public key do projeto. O roteiro completo esta em PROXIMOS_PASSOS_SUPABASE.md.
+Use o arquivo supabase-schema.sql para criar o banco no Supabase. Depois crie os usuarios, vincule cada usuario a um perfil na tabela app_users e preencha supabase-config.js com a Project URL e a anon public key do projeto. O roteiro completo esta em PROXIMOS_PASSOS_SUPABASE.md.

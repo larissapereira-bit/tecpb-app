@@ -42,9 +42,34 @@ Mediuns:
 - Flavia
 - Luciana
 
-## 4. Ligar o app ao banco
+Depois de criar cada usuario, abra a tabela `app_users` e vincule o ID do usuario ao perfil.
 
-Depois que `supabase-config.js` tiver URL e anon key, o app deve ganhar a camada de sincronizacao:
+Exemplo:
+
+```sql
+insert into public.app_users (id, profile_id, full_name, role)
+values
+  ('UUID_DO_USUARIO_THIAGO', 'thiago', 'Thiago', 'admin'),
+  ('UUID_DO_USUARIO_JAQUELINE', 'jaqueline', 'Jaqueline', 'admin'),
+  ('UUID_DO_USUARIO_LARISSA', 'larissa', 'Larissa', 'admin');
+```
+
+Para os demais, use `role = 'medium'`.
+
+## 4. Preencher a configuracao
+
+Preencha `supabase-config.js` assim:
+
+```js
+window.TECPB_SUPABASE = {
+  url: "SUA_PROJECT_URL",
+  anonKey: "SUA_ANON_PUBLIC_KEY",
+};
+```
+
+## 5. O que ja fica preparado para sincronizar
+
+Depois que `supabase-config.js` tiver URL e anon key e o usuario entrar com e-mail/senha, o app ja tem camada de sincronizacao para:
 
 - calendario cria eventos para todos
 - listas aparecem para todos e cada pessoa assume/entrega seus itens
@@ -53,6 +78,6 @@ Depois que `supabase-config.js` tiver URL e anon key, o app deve ganhar a camada
 - forum fica compartilhado entre todos
 - perfis e fotos passam a carregar do banco
 
-## 5. Publicar de novo
+## 6. Publicar de novo
 
 Depois da conexao pronta, gerar novo pacote e publicar no GitHub Pages.
