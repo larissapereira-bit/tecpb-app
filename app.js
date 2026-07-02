@@ -1812,6 +1812,15 @@ function renderEvents() {
     block.innerHTML = `<strong>${dateParts.day}</strong><span>${dateParts.month}</span>`;
 
     const body = document.createElement("div");
+    body.className = "event-card-body";
+    const overline = document.createElement("div");
+    overline.className = "event-overline";
+    const typeTag = document.createElement("span");
+    typeTag.className = "event-type-chip";
+    typeTag.textContent = event.type;
+    const responseCount = document.createElement("span");
+    responseCount.textContent = `${Object.keys(event.responses || {}).length} respostas`;
+    overline.append(typeTag, responseCount);
     const title = document.createElement("h2");
     title.textContent = event.title;
     const meta = document.createElement("p");
@@ -1822,11 +1831,8 @@ function renderEvents() {
     const responseTag = document.createElement("span");
     responseTag.className = myResponse === "Vou" ? "tag confirmed" : myResponse === "Não vou" ? "tag pending" : "tag";
     responseTag.textContent = myResponse;
-    const countTag = document.createElement("span");
-    countTag.className = "tag";
-    countTag.textContent = `${Object.keys(event.responses || {}).length} respostas`;
-    tags.append(responseTag, countTag);
-    body.append(title, meta, tags);
+    tags.append(responseTag);
+    body.append(overline, title, meta, tags);
 
     card.append(block, body);
     card.addEventListener("click", () => selectEvent(event.id));
