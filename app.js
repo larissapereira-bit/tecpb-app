@@ -430,6 +430,7 @@ const recoveryEmail = document.querySelector("#recovery-email");
 const sendRecoveryButton = document.querySelector("#send-recovery-button");
 const showRecoveryButton = document.querySelector("#show-recovery-button");
 const backLoginButton = document.querySelector("#back-login-button");
+const previewLocalButton = document.querySelector("#preview-local-button");
 const passwordSetupForm = document.querySelector("#password-setup-form");
 const newPassword = document.querySelector("#new-password");
 const confirmPassword = document.querySelector("#confirm-password");
@@ -752,6 +753,7 @@ function setLoginScreenState(state) {
   if (loginForm) loginForm.hidden = state === "password" || state === "recovery";
   if (passwordRecoveryForm) passwordRecoveryForm.hidden = state !== "recovery";
   if (passwordSetupForm) passwordSetupForm.hidden = state !== "password";
+  if (previewLocalButton) previewLocalButton.hidden = true;
   if (state === "login") showEmailStep();
 
   if (state === "password") {
@@ -767,7 +769,21 @@ function showUnlinkedAccount() {
   setLoginScreenState("login");
   if (loginForm) loginForm.hidden = true;
   if (passwordSetupForm) passwordSetupForm.hidden = true;
+  if (passwordRecoveryForm) passwordRecoveryForm.hidden = true;
+  if (previewLocalButton) previewLocalButton.hidden = false;
   setAuthMessage("Conta criada. Agora a administração precisa vincular seu usuário ao perfil.");
+}
+
+function enterLocalPreviewMode() {
+  remoteSession = null;
+  document.body.classList.remove("auth-required");
+  if (loginScreen) loginScreen.hidden = true;
+  if (syncStatus) syncStatus.textContent = "Visualização local: dados online não carregados";
+  activeProfileId = "larissa";
+  currentProfileId = "larissa";
+  setMode("admin");
+  renderEverything();
+  showScreen("inicio");
 }
 
 function showEmailStep() {
@@ -2447,6 +2463,7 @@ sendRecoveryButton?.addEventListener("click", sendPasswordRecovery);
 recoveryEmail?.addEventListener("keydown", (event) => {
   if (event.key === "Enter") sendPasswordRecovery();
 });
+previewLocalButton?.addEventListener("click", enterLocalPreviewMode);
 loginButton?.addEventListener("click", async () => {
   await loginWithEmailPassword(loginEmail?.value.trim(), loginPassword?.value || "");
 });

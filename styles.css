@@ -1397,6 +1397,11 @@ textarea {
   font-weight: 850;
 }
 
+.preview-button {
+  width: 100%;
+  margin-top: 18px;
+}
+
 .app-shell {
   grid-template-columns: 292px minmax(0, 1fr);
   min-height: 100vh;
